@@ -1,0 +1,34 @@
+---
+import BlogPost from '../../Layout/blog/BlogLayout.astro';
+import Markdoc from '@markdoc/markdoc';
+
+const content = `
+## Markdoc rendered
+
+### Introduction
+
+This is a markdown that would be rendered into the website as a blog texts and images go here
+
+> Of course blockquotes ~~and what not!~~
+
+Link to [conclusion](#conclusion)
+
+Lorem ipsum dolor, sit amet consectetur adipisicing elit. _Laudantium_ laboriosam **dolore** exercitationem reprehenderit voluptatum harum asperiores perferendis rem? Ad necessitatibus quod debitis placeat accusantium sint. Totam nemo voluptatum praesentium deleniti?
+
+1. Lorem ipsum dolor
+2. sit amet consectetur adipisicing elit.
+3. Laudantium laboriosam dolore exercitationem reprehenderit voluptatum harum asperiores perferendis rem?
+   - Ad necessitatibus quod debitis placeat accusantium sint.
+   - Totam nemo voluptatum praesentium deleniti?
+
+### Code
+Some experimental code in this section
+
+### Conclusion
+In conclusion, we would absolutely require tailwindcss' **typography** plugin to render the markdown correctly
+`;
+---
+
+<BlogPost>
+  <Fragment set:html={Markdoc.renderers.html(Markdoc.transform(Markdoc.parse(content)))} />
+</BlogPost>

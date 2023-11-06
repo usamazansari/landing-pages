@@ -1,0 +1,32 @@
+---
+import { ColorSchemeScript } from '@mantine/core';
+import Footer from './Footer.astro';
+import Header from './Header.astro';
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>Astro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Icons" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <ColorSchemeScript defaultColorScheme="dark" />
+  </head>
+
+  <body class="grid grid-rows-[auto_1fr_auto] min-h-screen text-sm">
+    <nav class="sticky top-0 left-0 right-0">
+      <Header />
+    </nav>
+    <main class="flex justify-center">
+      <div class="container p-4">
+        <slot />
+      </div>
+    </main>
+    <footer>
+      <Footer />
+    </footer>
+  </body>
+</html>
