@@ -27,7 +27,7 @@ export function NavbarComponent() {
 
   return (
     <MantineProvider theme={theme} defaultColorScheme={colorScheme}>
-      <Flex gap="md" align="center" justify="space-between" px="md" style={{ minHeight: '60px' }}>
+      <Flex gap="md" align="center" justify="space-between" px="md" style={{ minHeight: '60px', zIndex: 10, backgroundColor: 'var(--mantine-color-body)' }}>
         <Flex gap="md">
           <DrawerComponent opened={opened} close={close} />
           <Burger
