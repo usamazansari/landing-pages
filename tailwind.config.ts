@@ -6,7 +6,7 @@ export default {
   content: ['./src/**/*.{astro,html,mdx,tsx}'],
   darkMode: ['class', '[data-mantine-color-scheme="dark"]'],
   theme: {
-    colors: { ...mantineColors },
+    colors: {},
   },
   plugins: [typography],
 };
