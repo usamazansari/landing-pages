@@ -1,9 +1,8 @@
 ---
-import BlogPost from '../../Layout/blog/BlogLayout.astro';
-import Markdoc from '@markdoc/markdoc';
+layout: '../../Layout/blog/BlogLayout.astro'
+---
 
-const content = `
-## Markdoc rendered
+## MDX rendered
 
 ### Introduction
 
@@ -22,13 +21,15 @@ Lorem ipsum dolor, sit amet consectetur adipisicing elit. _Laudantium_ laboriosa
    - Totam nemo voluptatum praesentium deleniti?
 
 ### Code
+
 Some experimental code in this section
 
-### Conclusion
-In conclusion, we would absolutely require tailwindcss' **typography** plugin to render the markdown correctly
-`;
----
+```py
+class Anonymous():
+  def __init__():
+    print("Initialization!")
+```
 
-<BlogPost>
-  <Fragment set:html={Markdoc.renderers.html(Markdoc.transform(Markdoc.parse(content)))} />
-</BlogPost>
+### Conclusion
+
+In conclusion, we would absolutely require tailwindcss' **typography** plugin to render the markdown correctly
