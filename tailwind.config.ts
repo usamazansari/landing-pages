@@ -1,5 +1,4 @@
 import typography from '@tailwindcss/typography';
-import { mantineColors } from './src/config/tailwind/mantine-colors';
 
 /** @type {import('tailwindcss').Config} */
 export default {
@@ -10,4 +9,3 @@ export default {
   },
   plugins: [typography],
 };
-

@@ -1,10 +1,9 @@
-import { Avatar, Box, Divider, Drawer, NavLink, ScrollArea, Text, useMantineColorScheme, useMantineTheme } from '@mantine/core';
+import { Box, Divider, Drawer, NavLink, ScrollArea, Text, useMantineTheme } from '@mantine/core';
 import { useViewportSize } from '@mantine/hooks';
 import { useMemo } from 'react';
 
 export function DrawerComponent({ opened, close }: { opened: boolean; close: () => void }) {
   const theme = useMantineTheme();
-  const colorScheme = useMantineColorScheme();
   const { width } = useViewportSize();
   const breakpoint = useMemo(() => {
     const number = theme.breakpoints.md.match(/\d+/);

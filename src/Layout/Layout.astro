@@ -17,8 +17,8 @@ import Header from './Header.astro';
   </head>
 
   <body class="grid grid-rows-[auto_1fr_auto] min-h-screen text-sm">
-    <nav class="sticky top-0 left-0 right-0">
-      <Header />
+    <nav class="sticky top-0 left-0 right-0 z-10">
+      <slot name="nav" />
     </nav>
     <main class="flex justify-center">
       <div class="container p-4">
@@ -26,7 +26,7 @@ import Header from './Header.astro';
       </div>
     </main>
     <footer>
-      <Footer />
+      <slot name="footer" />
     </footer>
   </body>
 </html>

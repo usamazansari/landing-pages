@@ -1,5 +1,14 @@
 ---
+import Footer from '../Layout/Footer.astro';
+import Header from '../Layout/Header.astro';
 import Layout from '../Layout/Layout.astro';
+import { Home } from '../components/react/landing-pages';
 ---
 
-<Layout />
+<Layout>
+  <Header slot="nav" />
+
+  <Home client:load />
+
+  <Footer slot="footer" />
+</Layout>
