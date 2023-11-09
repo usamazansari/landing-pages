@@ -1,7 +1,6 @@
 ---
 import { ColorSchemeScript } from '@mantine/core';
-import Footer from './Footer.astro';
-import Header from './Header.astro';
+import { ViewTransitions } from 'astro:transitions';
 ---
 
 <html lang="en">
@@ -14,6 +13,7 @@ import Header from './Header.astro';
     <link href="https://fonts.googleapis.com/css2?family=Material+Icons" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
     <ColorSchemeScript defaultColorScheme="dark" />
+    <ViewTransitions fallback="swap" />
   </head>
 
   <body class="grid grid-rows-[auto_1fr_auto] min-h-screen text-sm">
