@@ -1,5 +1,7 @@
-import { Badge, Box, Button, Card, Flex, Image, MantineProvider, Text, Title } from '@mantine/core';
+import { Badge, Box, Button, Card, Flex, Image, MantineProvider, ScrollArea, Text, Title } from '@mantine/core';
 import { useMemo } from 'react';
+import { theme } from '../../../../config/mantine/mantine.theme';
+import { ErrorBoundary, ErrorBoundaryFallback } from '../../error-boundary';
 
 interface PageCard {
   description: string;
@@ -58,7 +60,7 @@ export function Home() {
           icon: 'newspaper',
           label: 'News',
           href: '/news',
-          activeUsers: Math.random() * 15,
+          activeUsers: 0,
           image: 'https://cdn.pixabay.com/photo/2014/05/21/22/28/old-newspaper-350376_1280.jpg',
         },
         {
@@ -67,7 +69,7 @@ export function Home() {
           icon: 'account_balance',
           label: 'Bank',
           href: '/bank',
-          activeUsers: Math.random() * 15,
+          activeUsers: 0,
           image: 'https://cdn.pixabay.com/photo/2015/09/15/15/53/bank-notes-941246_1280.jpg',
         },
         {
@@ -75,7 +77,7 @@ export function Home() {
           icon: 'shopping_cart',
           label: 'E-Commerce',
           href: '/e-commerce',
-          activeUsers: Math.random() * 15,
+          activeUsers: 0,
           image: 'https://cdn.pixabay.com/photo/2021/11/22/20/20/online-6817350_1280.jpg',
         },
         {
@@ -84,7 +86,7 @@ export function Home() {
           icon: 'local_library',
           label: 'Scrollytelling',
           href: '/scrollytelling',
-          activeUsers: Math.random() * 15,
+          activeUsers: 0,
           image: 'https://cdn.pixabay.com/photo/2017/04/13/19/40/old-2228518_1280.jpg',
         },
         {
@@ -92,7 +94,7 @@ export function Home() {
           icon: 'fingerprint',
           label: 'Auth',
           href: '/auth',
-          activeUsers: Math.random() * 15,
+          activeUsers: 0,
           image: 'https://cdn.pixabay.com/photo/2017/09/19/16/00/cyber-security-2765707_1280.jpg',
         },
         {
@@ -100,7 +102,7 @@ export function Home() {
           icon: 'photo_album',
           label: 'Collection',
           href: '/collection',
-          activeUsers: Math.random() * 15,
+          activeUsers: 0,
           image: 'https://cdn.pixabay.com/photo/2014/12/04/15/53/photomontage-556806_1280.jpg',
         },
         {
@@ -109,7 +111,7 @@ export function Home() {
           icon: 'flight',
           label: 'Travel',
           href: '/travel',
-          activeUsers: Math.random() * 15,
+          activeUsers: 0,
           image: 'https://cdn.pixabay.com/photo/2017/06/05/11/01/airport-2373727_1280.jpg',
         },
         {
@@ -117,7 +119,7 @@ export function Home() {
           icon: 'cloud',
           label: 'Weather',
           href: '/weather',
-          activeUsers: Math.random() * 15,
+          activeUsers: 0,
           image: 'https://cdn.pixabay.com/photo/2015/09/23/08/16/thunder-953118_1280.jpg',
         },
         {
@@ -125,7 +127,7 @@ export function Home() {
           icon: 'movie',
           label: 'Video Sharing',
           href: '/video-sharing',
-          activeUsers: Math.random() * 15,
+          activeUsers: 0,
           image: 'https://cdn.pixabay.com/photo/2020/09/14/17/45/tv-5571609_1280.jpg',
         },
         {
@@ -133,7 +135,7 @@ export function Home() {
           icon: 'chat',
           label: 'Chat',
           href: '/chat',
-          activeUsers: Math.random() * 15,
+          activeUsers: 0,
           image: 'https://cdn.pixabay.com/photo/2023/02/04/17/28/chat-7767693_1280.jpg',
         },
         {
@@ -141,7 +143,7 @@ export function Home() {
           icon: 'devices',
           label: 'Tech Review',
           href: '/tech-review',
-          activeUsers: Math.random() * 15,
+          activeUsers: 0,
           image: 'https://cdn.pixabay.com/photo/2016/11/29/08/41/apple-1868496_1280.jpg',
         },
         {
@@ -149,7 +151,7 @@ export function Home() {
           icon: 'wallpaper',
           label: 'Image Gallery',
           href: '/image-gallery',
-          activeUsers: Math.random() * 15,
+          activeUsers: 0,
           image: 'https://cdn.pixabay.com/photo/2016/01/09/18/27/camera-1130731_1280.jpg',
         },
         {
@@ -158,7 +160,7 @@ export function Home() {
           icon: 'feed',
           label: 'Social Media Feed',
           href: '/social-media-feed',
-          activeUsers: Math.random() * 15,
+          activeUsers: 0,
           image: 'https://cdn.pixabay.com/photo/2018/09/23/08/21/balloons-3696902_1280.jpg',
         },
         {
@@ -167,22 +169,26 @@ export function Home() {
           icon: 'article',
           label: 'Blog',
           href: '/posts',
-          activeUsers: Math.random() * 15,
+          activeUsers: 0,
           image: 'https://cdn.pixabay.com/photo/2015/07/19/10/00/school-work-851328_1280.jpg',
         },
       ] as PageCard[],
     [],
   );
   return (
-    <MantineProvider>
-      <Flex direction="column" gap="lg">
-        <Title order={2}>The Many Facets of the Web</Title>
-        <Box className={'grid grid-cols-3 gap-4'}>
-          {pages.map(page => (
-            <LandingPageCard key={page.href} {...page} />
-          ))}
-        </Box>
-      </Flex>
+    <MantineProvider theme={theme}>
+      <ErrorBoundary fallback={<ErrorBoundaryFallback />}>
+        <ScrollArea h="100%" className="p-4">
+          <Flex direction="column" gap="lg" className="container mx-auto">
+            <Title order={2}>The Many Facets of the Web</Title>
+            <Box className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+              {pages.map(page => (
+                <LandingPageCard key={page.href} {...page} />
+              ))}
+            </Box>
+          </Flex>
+        </ScrollArea>
+      </ErrorBoundary>
     </MantineProvider>
   );
 }

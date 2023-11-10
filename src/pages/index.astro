@@ -1,14 +1,10 @@
 ---
-import Footer from '../Layout/Footer.astro';
-import Header from '../Layout/Header.astro';
 import Layout from '../Layout/Layout.astro';
-import { Home } from '../components/react/landing-pages';
+import { Home as Main, HomeHeader as Header, HomeFooter as Footer } from '../components/react/landing-pages';
 ---
 
 <Layout>
-  <Header slot="nav" />
-
-  <Home client:load />
-
+  <Header slot="nav" client:load />
+  <Main client:load />
   <Footer slot="footer" />
 </Layout>
