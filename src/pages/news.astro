@@ -1,10 +1,12 @@
 ---
 import Layout from '../Layout/Layout.astro';
 import { News as Main, NewsHeader as Header, NewsFooter as Footer } from '../components/react/landing-pages';
+
+const apiKey = Bun.env.CURRENTS_NEWS_API_KEY;
 ---
 
 <Layout>
   <Header slot="nav" client:load />
-  <Main client:load />
+  <Main apiKey={apiKey} client:load />
   <Footer slot="footer" />
 </Layout>
