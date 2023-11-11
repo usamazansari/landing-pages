@@ -3,5 +3,5 @@ export type QueryHooks<T> = {
   isLoading: boolean;
   isSuccess: boolean;
   isError: boolean;
-  error: unknown;
+  error: Error;
 };
