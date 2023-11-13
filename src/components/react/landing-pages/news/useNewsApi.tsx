@@ -24,5 +24,5 @@ export const useNewsApi = ({ apiKey }: { apiKey: string }) => {
     })();
   }, [apiKey]);
 
-  return { data, isLoading, isSuccess, error, isError: !!error } as QueryHooks<unknown>;
+  return { data, isLoading, isSuccess, error, isError: !!error } as QueryHooks<News>;
 };

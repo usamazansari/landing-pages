@@ -1,10 +1,132 @@
-import { Box, Card, Flex, MantineProvider, Loader, ScrollArea, Text, CardSection, Accordion, Code, Divider } from '@mantine/core';
+import { Badge, Box, Card, Flex, Image, MantineProvider, ScrollArea, Skeleton, Spoiler, Text, Title, useMantineTheme } from '@mantine/core';
 import { theme } from '../../../../config/mantine/mantine.theme';
-import { ErrorBoundary, ErrorBoundaryFallback } from '../../error-boundary';
+import { ErrorBoundary, ErrorBoundaryFallback, ErrorCard } from '../../error-boundary';
 import { useNewsApi } from './useNewsApi';
+import { useListState, useMediaQuery } from '@mantine/hooks';
+import React, { useMemo } from 'react';
+import type { News } from './News.types';
+
+function NewsLayout({ children }: { children: React.ReactNode }) {
+  const theme = useMantineTheme();
+  const isNarrow = useMediaQuery(`(max-width: ${theme.breakpoints.md})`);
+  return (
+    <Box
+      className="grid gap-4"
+      style={{
+        gridTemplateAreas: isNarrow
+          ? `
+            'enlarged-full'
+            'aside-top'
+            'aside-bottom'
+            'center-left'
+            'center'
+            'center-right'
+            'enlarged-horizontal'
+            'bottom-right'
+          `
+          : `
+          'enlarged-full enlarged-full aside-top'
+          'enlarged-full enlarged-full aside-bottom'
+          'center-left center center-right'
+          'enlarged-horizontal enlarged-horizontal bottom-right'
+          `,
+      }}>
+      {children}
+    </Box>
+  );
+}
+
+function NewsItemLayout({ children }: { children: React.ReactNode }) {
+  const theme = useMantineTheme();
+  const isNarrow = useMediaQuery(`(max-width: ${theme.breakpoints.md})`);
+
+  return (
+    <Box
+      className="grid gap-4"
+      style={{
+        gridTemplateAreas: isNarrow
+          ? `
+              'image'
+              'title'
+              'category'
+              'published'
+              'description'
+            `
+          : `
+              'image image title'
+              'image image category'
+              'published empty empty'
+              'description description description'
+            `,
+      }}>
+      {children}
+    </Box>
+  );
+}
+
+function NewsSkeleton({ scale }: { scale: number }) {
+  const theme = useMantineTheme();
+  const isNarrow = useMediaQuery(`(max-width: ${theme.breakpoints.md})`);
+
+  const scaleFactor = useMemo(() => (isNarrow ? 4 : scale), []);
+
+  return (
+    <NewsItemLayout>
+      <Skeleton height={32 * scaleFactor} width="100%" style={{ gridArea: 'image' }} />
+      <Skeleton height={3 * scaleFactor} style={{ gridArea: 'title', alignSelf: 'flex-end' }} />
+      <Flex direction="column" style={{ gridArea: 'category' }} gap="xs">
+        <Skeleton height={2 * scaleFactor} />
+        <Skeleton height={2 * scaleFactor} width="80%" />
+      </Flex>
+      <Skeleton height={1 * scaleFactor} width="30%" style={{ gridArea: 'published', alignSelf: 'flex-end' }} />
+      <Flex direction="column" gap="xs" style={{ gridArea: 'description' }}>
+        <Skeleton height={1 * scaleFactor} />
+        <Skeleton height={1 * scaleFactor} />
+        <Skeleton height={1 * scaleFactor} width="65%" />
+      </Flex>
+    </NewsItemLayout>
+  );
+}
+
+function NewsItem({ image, title, category, published, description }: News['news'][number]) {
+  return (
+    <NewsItemLayout>
+      <Image src={image} style={{ gridArea: 'image' }} />
+      <Title order={3} style={{ gridArea: 'title', alignSelf: 'flex-end' }}>
+        {title}
+      </Title>
+      <Flex align="center" wrap="wrap" gap="xs" style={{ gridArea: 'category' }}>
+        {category.map(c => (
+          <Badge variant="filled">{c.toUpperCase()}</Badge>
+        ))}
+      </Flex>
+      <Text size="sm" c="dimmed" style={{ gridArea: 'published', alignSelf: 'flex-end' }}>
+        {new Date(published).toDateString()}
+      </Text>
+      <Flex direction="column" gap="xs" style={{ gridArea: 'description' }}>
+        <Spoiler hideLabel="Show less" showLabel="Show more" maxHeight={42}>
+          {description}
+        </Spoiler>
+      </Flex>
+    </NewsItemLayout>
+  );
+}
 
 export function News({ apiKey }: { apiKey: string }) {
   const { data, isError, isLoading, isSuccess, error } = useNewsApi({ apiKey });
+  const [gridAreaList] = useListState([
+    'enlarged-full',
+    'aside-top',
+    'aside-bottom',
+    'center-left',
+    'center',
+    'center-right',
+    'enlarged-horizontal',
+    'bottom-right',
+  ]);
+
+  const slicedNews = useMemo(() => data?.news?.slice(0, gridAreaList.length - 2) ?? [], [data, gridAreaList]);
+
   return (
     <MantineProvider theme={theme}>
       <ErrorBoundary fallback={<ErrorBoundaryFallback />}>
@@ -14,44 +136,24 @@ export function News({ apiKey }: { apiKey: string }) {
               <Text ta="center">Advertisement</Text>
             </Card>
             {isLoading ? (
-              <Box className="flex grid-cols-[auto_auto] items-center justify-center h-full gap-4">
-                <Loader />
-                <Text>Loading Data</Text>
-              </Box>
-            ) : null}
-            {isSuccess ? <Text>{JSON.stringify(data)}</Text> : null}
-            {isError ? (
-              <Card withBorder>
-                <Card.Section withBorder>
-                  <Box className="flex items-center justify-center p-4" c="red">
-                    <span className="material-icons text-7xl">error</span>
+              <NewsLayout>
+                {gridAreaList.map((area, index) => (
+                  <Box key={area} style={{ gridArea: area }}>
+                    <NewsSkeleton scale={!index ? 4 : 12} />
                   </Box>
-                </Card.Section>
-                <Card.Section withBorder>
-                  <Accordion>
-                    <Accordion.Item value="error">
-                      <Accordion.Control>
-                        <Box className="grid gap-1">
-                          <Text className="leading-none" fw={500}>
-                            Error Fetching data
-                          </Text>
-                          <Text size="xs" c="dimmed" className="leading-none">
-                            Click to view the error stacktrace
-                          </Text>
-                        </Box>
-                      </Accordion.Control>
-                      <Accordion.Panel>
-                        <Box className="grid gap-2">
-                          <Code p="md" block>
-                            {error.stack}
-                          </Code>
-                        </Box>
-                      </Accordion.Panel>
-                    </Accordion.Item>
-                  </Accordion>
-                </Card.Section>
-              </Card>
+                ))}
+              </NewsLayout>
             ) : null}
+            {isSuccess ? (
+              <NewsLayout>
+                {slicedNews.map((newsItem, index) => (
+                  <Box key={newsItem.id} style={{ gridArea: gridAreaList[index] }}>
+                    <NewsItem {...newsItem} />
+                  </Box>
+                ))}
+              </NewsLayout>
+            ) : null}
+            {isError ? ErrorCard(error) : null}
           </Flex>
         </ScrollArea>
       </ErrorBoundary>

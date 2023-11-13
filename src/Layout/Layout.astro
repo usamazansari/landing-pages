@@ -1,7 +1,6 @@
 ---
-import { ColorSchemeScript, MantineProvider } from '@mantine/core';
+import { ColorSchemeScript } from '@mantine/core';
 import { ViewTransitions } from 'astro:transitions';
-import { ErrorBoundary } from '../components/react/error-boundary';
 ---
 
 <html lang="en">
@@ -18,10 +17,10 @@ import { ErrorBoundary } from '../components/react/error-boundary';
   </head>
 
   <body class="grid grid-rows-[auto_1fr_auto] h-screen text-sm relative">
-    <nav>
+    <nav class="sticky top-0 left-0 right-0 z-10">
       <slot name="nav" />
     </nav>
-    <main class="overflow-hidden">
+    <main>
       <slot />
     </main>
     <footer>
