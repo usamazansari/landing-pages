@@ -11,17 +11,27 @@ export interface NewsElement {
   url: string;
   author: string;
   image: string;
-  language: Language;
-  category: Category[];
+  language: string;
+  category: NewsCategory[];
   published: string;
 }
 
-export enum Category {
+export enum NewsCategory {
+  Academia = 'academia',
+  Business = 'business',
+  Entertainment = 'entertainment',
+  Finance = 'finance',
+  Food = 'food',
+  Game = 'game',
   General = 'general',
+  Health = 'health',
+  Lifestyle = 'lifestyle',
+  Opinion = 'opinion',
   Politics = 'politics',
+  Programming = 'programming',
+  Regional = 'regional',
+  Science = 'science',
+  Sports = 'sports',
+  Technology = 'technology',
   World = 'world',
-}
-
-export enum Language {
-  En = 'en',
 }
