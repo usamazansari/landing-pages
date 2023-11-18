@@ -44,12 +44,10 @@ export function HomeDrawer({ opened, close }: { opened: boolean; close: () => vo
         </Drawer.Header>
         <Divider />
         <Drawer.Body p={0}>
-          <Box className="grid gap-4">
-            <Box className="grid">
-              {menuItems.map(({ href, icon, label }) => (
-                <NavLink key={label} label={label} leftSection={<span className="material-icons">{icon}</span>} href={href} />
-              ))}
-            </Box>
+          <Box className="grid">
+            {menuItems.map(({ href, icon, label }) => (
+              <NavLink key={label} label={label} leftSection={<span className="material-icons">{icon}</span>} href={href} />
+            ))}
           </Box>
         </Drawer.Body>
       </Drawer.Content>

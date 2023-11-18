@@ -1,6 +1,6 @@
 import { Accordion, Box, Card, Code, Text } from '@mantine/core';
 
-export function ErrorCard(error: Error) {
+export function ErrorCard({ error }: { error: Error }) {
   return (
     <Card withBorder>
       <Card.Section withBorder>
@@ -12,7 +12,7 @@ export function ErrorCard(error: Error) {
         <Accordion>
           <Accordion.Item value="error">
             <Accordion.Control>
-              <Box className="grid gap-1">
+              <Box className="grid gap-xs">
                 <Text className="leading-none" fw={500}>
                   Error Fetching data
                 </Text>
@@ -22,7 +22,7 @@ export function ErrorCard(error: Error) {
               </Box>
             </Accordion.Control>
             <Accordion.Panel>
-              <Box className="grid gap-2">
+              <Box className="grid gap-sm">
                 <Code p="md" block>
                   {error.stack}
                 </Code>
