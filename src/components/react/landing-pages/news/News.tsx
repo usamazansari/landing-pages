@@ -1,131 +1,112 @@
-import { Badge, Box, Card, Flex, Image, MantineProvider, ScrollArea, Skeleton, Spoiler, Text, Title, useMantineTheme } from '@mantine/core';
-import { theme } from '../../../../config/mantine/mantine.theme';
-import { ErrorBoundary, ErrorBoundaryFallback, ErrorCard } from '../../error-boundary';
-import { useNewsApi } from './useNewsApi';
+import { Badge, Box, Card, Flex, Image, MantineProvider, ScrollArea, Skeleton, Spoiler, Text, useMantineTheme } from '@mantine/core';
 import { useListState, useMediaQuery } from '@mantine/hooks';
 import React, { useMemo } from 'react';
+import { theme } from '../../../../config/mantine/mantine.theme';
+import { ErrorBoundary, ErrorBoundaryFallback, ErrorCard } from '../../error-boundary';
 import type { News } from './News.types';
+import { useNewsApi } from './useNewsApi';
 
 function NewsLayout({ children }: { children: React.ReactNode }) {
   const theme = useMantineTheme();
   const isNarrow = useMediaQuery(`(max-width: ${theme.breakpoints.md})`);
+
   return (
     <Box
-      className="grid gap-4"
+      className="grid gap-xl"
       style={{
         gridTemplateAreas: isNarrow
-          ? `
-            'enlarged-full'
-            'aside-top'
-            'aside-bottom'
-            'center-left'
-            'center'
-            'center-right'
-            'enlarged-horizontal'
-            'bottom-right'
+          ? `'top-middle-left-center'
+          'top-right'
+          'top-middle-right'
+          'middle-left'
+          'middle-center'
+          'middle-right'
+          'bottom-left'
+          'bottom-middle-left'
+          'bottom-middle-right-center'
           `
-          : `
-          'enlarged-full enlarged-full aside-top'
-          'enlarged-full enlarged-full aside-bottom'
-          'center-left center center-right'
-          'enlarged-horizontal enlarged-horizontal bottom-right'
-          `,
+          : `'top-middle-left-center top-middle-left-center top-right'
+          'top-middle-left-center top-middle-left-center top-middle-right'
+          'middle-left middle-center middle-right'
+          'bottom-middle-left bottom-middle-right-center bottom-middle-right-center'
+          'bottom-left bottom-middle-right-center bottom-middle-right-center'`,
       }}>
       {children}
     </Box>
   );
 }
 
-function NewsItemLayout({ children }: { children: React.ReactNode }) {
-  const theme = useMantineTheme();
-  const isNarrow = useMediaQuery(`(max-width: ${theme.breakpoints.md})`);
-
+function NewsSkeleton() {
   return (
-    <Box
-      className="grid gap-4"
-      style={{
-        gridTemplateAreas: isNarrow
-          ? `
-              'image'
-              'title'
-              'category'
-              'published'
-              'description'
-            `
-          : `
-              'image image title'
-              'image image category'
-              'published empty empty'
-              'description description description'
-            `,
-      }}>
-      {children}
-    </Box>
+    <Card withBorder>
+      <Card.Section>
+        <Skeleton height={250} />
+      </Card.Section>
+      <Box mt="md" className="grid gap-md">
+        <Skeleton height={24} />
+        <Flex align="center" justify="space-between">
+          <Skeleton height={16} />
+          <Flex align="flex-start" wrap="wrap" gap="xs">
+            <Skeleton height={16} />
+            <Skeleton height={16} />
+          </Flex>
+        </Flex>
+        <Flex direction="column">
+          <Skeleton height={80} />
+        </Flex>
+      </Box>
+    </Card>
   );
 }
 
-function NewsSkeleton({ scale }: { scale: number }) {
-  const theme = useMantineTheme();
-  const isNarrow = useMediaQuery(`(max-width: ${theme.breakpoints.md})`);
-
-  const scaleFactor = useMemo(() => (isNarrow ? 4 : scale), []);
-
+function NewsItem({ newsItem, largeArea }: { newsItem: News['news'][number]; largeArea: boolean }) {
   return (
-    <NewsItemLayout>
-      <Skeleton height={32 * scaleFactor} width="100%" style={{ gridArea: 'image' }} />
-      <Skeleton height={3 * scaleFactor} style={{ gridArea: 'title', alignSelf: 'flex-end' }} />
-      <Flex direction="column" style={{ gridArea: 'category' }} gap="xs">
-        <Skeleton height={2 * scaleFactor} />
-        <Skeleton height={2 * scaleFactor} width="80%" />
-      </Flex>
-      <Skeleton height={1 * scaleFactor} width="30%" style={{ gridArea: 'published', alignSelf: 'flex-end' }} />
-      <Flex direction="column" gap="xs" style={{ gridArea: 'description' }}>
-        <Skeleton height={1 * scaleFactor} />
-        <Skeleton height={1 * scaleFactor} />
-        <Skeleton height={1 * scaleFactor} width="65%" />
-      </Flex>
-    </NewsItemLayout>
-  );
-}
-
-function NewsItem({ image, title, category, published, description }: News['news'][number]) {
-  return (
-    <NewsItemLayout>
-      <Image src={image} style={{ gridArea: 'image' }} />
-      <Title order={3} style={{ gridArea: 'title', alignSelf: 'flex-end' }}>
-        {title}
-      </Title>
-      <Flex align="center" wrap="wrap" gap="xs" style={{ gridArea: 'category' }}>
-        {category.map(c => (
-          <Badge variant="filled">{c.toUpperCase()}</Badge>
-        ))}
-      </Flex>
-      <Text size="sm" c="dimmed" style={{ gridArea: 'published', alignSelf: 'flex-end' }}>
-        {new Date(published).toDateString()}
-      </Text>
-      <Flex direction="column" gap="xs" style={{ gridArea: 'description' }}>
-        <Spoiler hideLabel="Show less" showLabel="Show more" maxHeight={42}>
-          {description}
-        </Spoiler>
-      </Flex>
-    </NewsItemLayout>
+    <Card className="h-full" withBorder>
+      <Card.Section>
+        <Image
+          h={largeArea ? 750 : 250}
+          src={newsItem.image}
+          fallbackSrc="https://img.freepik.com/free-vector/flat-design-no-data-illustration_23-2150527142.jpg"
+        />
+      </Card.Section>
+      <Box mt="md" className="grid gap-md">
+        <Text fw="bold">{newsItem.title}</Text>
+        <Flex align="center" justify="flex-start" gap="md">
+          <Text size="sm" c="dimmed" fs="italic" className="flex items-center gap-xs">
+            <span className="material-icons">today</span>
+            {new Date(newsItem.published).toDateString()}
+          </Text>
+          <Flex align="flex-start" wrap="wrap" gap="xs">
+            {newsItem.category.map(c => (
+              <Badge variant="filled">{c.toUpperCase()}</Badge>
+            ))}
+          </Flex>
+        </Flex>
+        <Flex direction="column" gap="xs">
+          <Spoiler hideLabel="Show less" showLabel="Show more" maxHeight={42}>
+            {newsItem.description}
+          </Spoiler>
+        </Flex>
+      </Box>
+    </Card>
   );
 }
 
 export function News({ apiKey }: { apiKey: string }) {
   const { data, isError, isLoading, isSuccess, error } = useNewsApi({ apiKey });
   const [gridAreaList] = useListState([
-    'enlarged-full',
-    'aside-top',
-    'aside-bottom',
-    'center-left',
-    'center',
-    'center-right',
-    'enlarged-horizontal',
-    'bottom-right',
+    'top-middle-left-center',
+    'top-right',
+    'top-middle-right',
+    'middle-left',
+    'middle-center',
+    'middle-right',
+    'bottom-left',
+    'bottom-middle-left',
+    'bottom-middle-right-center',
   ]);
 
-  const slicedNews = useMemo(() => data?.news?.slice(0, gridAreaList.length - 2) ?? [], [data, gridAreaList]);
+  const slicedNews = useMemo(() => (data?.news ?? []).slice(0, gridAreaList.length + 3), [data, gridAreaList]);
 
   return (
     <MantineProvider theme={theme}>
@@ -137,9 +118,9 @@ export function News({ apiKey }: { apiKey: string }) {
             </Card>
             {isLoading ? (
               <NewsLayout>
-                {gridAreaList.map((area, index) => (
+                {gridAreaList.map(area => (
                   <Box key={area} style={{ gridArea: area }}>
-                    <NewsSkeleton scale={!index ? 4 : 12} />
+                    <NewsSkeleton />
                   </Box>
                 ))}
               </NewsLayout>
@@ -148,12 +129,12 @@ export function News({ apiKey }: { apiKey: string }) {
               <NewsLayout>
                 {slicedNews.map((newsItem, index) => (
                   <Box key={newsItem.id} style={{ gridArea: gridAreaList[index] }}>
-                    <NewsItem {...newsItem} />
+                    <NewsItem newsItem={newsItem} largeArea={['top-middle-left-center', 'bottom-middle-right-center'].includes(gridAreaList[index])} />
                   </Box>
                 ))}
               </NewsLayout>
             ) : null}
-            {isError ? ErrorCard(error) : null}
+            {isError ? <ErrorCard error={error} /> : null}
           </Flex>
         </ScrollArea>
       </ErrorBoundary>
