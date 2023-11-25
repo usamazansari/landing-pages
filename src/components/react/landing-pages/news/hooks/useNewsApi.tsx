@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import type { INewsCategoryResponse, INewsResponse } from '../types';
 
 const BASE_URL = 'https://api.currentsapi.services/v1';
+const USE_CACHE = true;
 
 export const useNewsApi = ({ apiKey, category }: { apiKey: string; category?: string }): QueryHooks<INewsResponse> => {
   const endpoint = `${BASE_URL}/latest-news?apiKey=${apiKey}${!category ? '' : '&category=' + category}`;
@@ -15,7 +16,7 @@ export const useNewsApi = ({ apiKey, category }: { apiKey: string; category?: st
     (async function () {
       try {
         setIsLoading(true);
-        const response = await fetch(endpoint);
+        const response = await fetch(endpoint, { cache: USE_CACHE ? 'force-cache' : 'default' });
         const json = (await response.json()) as INewsResponse;
         setData(json);
         setIsSuccess(true);
@@ -41,7 +42,7 @@ export const useAvailableNewsCategoriesApi = () => {
     (async function () {
       try {
         setIsLoading(true);
-        const response = await fetch(endpoint);
+        const response = await fetch(endpoint, { cache: USE_CACHE ? 'force-cache' : 'default' });
         const json = (await response.json()) as INewsCategoryResponse;
         setData(json);
         setIsSuccess(true);
