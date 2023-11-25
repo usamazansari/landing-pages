@@ -1,0 +1,16 @@
+---
+import type { INewsCategoryResponse } from 'src/components/react/landing-pages/news/types';
+import Layout from '../../Layout/Layout.astro';
+import { News, NewsFooter, NewsHeader } from '../../components/react/landing-pages/news';
+
+const apiKey = Bun.env.CURRENTS_NEWS_API_KEY;
+
+const response = await fetch('https://api.currentsapi.services/v1/available/categories');
+const { categories } = (await response.json()) as INewsCategoryResponse;
+---
+
+<Layout>
+  <NewsHeader categories={categories} slot="nav" client:load />
+  <News apiKey={apiKey} client:load />
+  <NewsFooter slot="footer" />
+</Layout>

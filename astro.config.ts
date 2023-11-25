@@ -8,4 +8,3 @@ import { defineConfig } from 'astro/config';
 export default defineConfig({
   integrations: [mdx(), react(), tailwind(), markdoc()],
 });
-

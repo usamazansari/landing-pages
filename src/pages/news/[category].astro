@@ -1,0 +1,19 @@
+---
+import NewsLayout from './NewsLayout.astro';
+import { News } from '../../components/react/landing-pages/news';
+import type { INewsCategoryResponse } from 'src/components/react/landing-pages/news/types';
+
+const { category } = Astro.params;
+const apiKey = Bun.env.CURRENTS_NEWS_API_KEY;
+
+export async function getStaticPaths() {
+  const response = await fetch('https://api.currentsapi.services/v1/available/categories');
+  const data = (await response.json()) as INewsCategoryResponse;
+  const { categories } = data;
+  return categories.sort((a, b) => a.localeCompare(b)).map(c => ({ params: { category: c.toLowerCase().replace(/\s/g, '-') } }));
+}
+---
+
+<NewsLayout>
+  <News apiKey={apiKey} category={category} client:load />
+</NewsLayout>
