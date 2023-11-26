@@ -22,7 +22,7 @@ export function NewsItem({ newsItem, largeArea = false }: { newsItem: INews; lar
           </Text>
           <Flex align="flex-start" wrap="wrap" gap="xs">
             {newsItem.category.map(c => (
-              <Badge key={c} variant="filled">
+              <Badge key={c} variant="filled" component="a" href={`/news/${c.toLowerCase().replace(/\s/g, '-')}`} style={{ cursor: 'pointer' }}>
                 {c.toUpperCase()}
               </Badge>
             ))}
