@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import type { INewsCategoryResponse, INewsResponse } from '../types';
 
 const BASE_URL = 'https://api.currentsapi.services/v1';
-const USE_CACHE = true;
+const USE_CACHE = false;
 
 export const useNewsApi = ({ apiKey, category }: { apiKey: string; category?: string }): QueryHooks<INewsResponse> => {
   const endpoint = `${BASE_URL}/latest-news?apiKey=${apiKey}${!category ? '' : '&category=' + category}`;
@@ -16,7 +16,7 @@ export const useNewsApi = ({ apiKey, category }: { apiKey: string; category?: st
     (async function () {
       try {
         setIsLoading(true);
-        const response = await fetch(endpoint, { cache: USE_CACHE ? 'force-cache' : 'default' });
+        const response = await fetch(endpoint, { cache: USE_CACHE ? 'force-cache' : 'no-cache' });
         const json = (await response.json()) as INewsResponse;
         setData(json);
         setIsSuccess(true);
@@ -26,7 +26,7 @@ export const useNewsApi = ({ apiKey, category }: { apiKey: string; category?: st
         setIsLoading(false);
       }
     })();
-  }, [apiKey]);
+  }, [apiKey, endpoint]);
 
   return { data, isLoading, isSuccess, error, isError: !!error } as QueryHooks<INewsResponse>;
 };
@@ -42,7 +42,7 @@ export const useAvailableNewsCategoriesApi = () => {
     (async function () {
       try {
         setIsLoading(true);
-        const response = await fetch(endpoint, { cache: USE_CACHE ? 'force-cache' : 'default' });
+        const response = await fetch(endpoint, { cache: USE_CACHE ? 'force-cache' : 'no-cache' });
         const json = (await response.json()) as INewsCategoryResponse;
         setData(json);
         setIsSuccess(true);
@@ -52,7 +52,7 @@ export const useAvailableNewsCategoriesApi = () => {
         setIsLoading(false);
       }
     })();
-  }, []);
+  }, [endpoint]);
 
   return { data, isLoading, isSuccess, error, isError: !!error } as QueryHooks<INewsCategoryResponse>;
 };
