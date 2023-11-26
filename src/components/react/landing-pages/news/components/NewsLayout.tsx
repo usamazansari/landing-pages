@@ -71,7 +71,10 @@ export function NewsLayout({ category, response }: { category: string; response:
             <>
               {headlines.map((newsItem, index) => (
                 <Box key={newsItem.id} style={{ gridArea: latestNewsGridAreaList[index] }}>
-                  <NewsItem newsItem={newsItem} largeArea={['top-middle-left-center', 'bottom-middle-right-center'].includes(latestNewsGridAreaList[index])} />
+                  <NewsItem
+                    newsItem={newsItem}
+                    largeArea={!isNarrowViewport ? ['top-middle-left-center', 'bottom-middle-right-center'].includes(latestNewsGridAreaList[index]) : false}
+                  />
                 </Box>
               ))}
 
