@@ -38,7 +38,10 @@ export function NewsDrawer({ categories = [], opened, close }: { categories: str
           <Flex direction="column" className="w-full gap-md">
             <Flex align="center" gap="md" className="px-md pt-md">
               <Drawer.Title className="cursor-default">
-                <Text fw={500}>Categories</Text>
+                <Flex align="center" gap="xs" p="md">
+                  <span className="material-icons">category</span>
+                  <Text fw={500}>Categories</Text>
+                </Flex>
               </Drawer.Title>
               <Drawer.CloseButton />
             </Flex>
@@ -62,6 +65,10 @@ export function NewsDrawer({ categories = [], opened, close }: { categories: str
                 itemWrapper: { width: '100%' },
                 itemLabel: { width: '100%' },
               }}>
+              <Divider className="p-md" />
+              <List.Item>
+                <NavLink label="HOME" href="/news" />
+              </List.Item>
               {groupedCategories.map(([initial, categories]) => (
                 <List.Item key={initial}>
                   <Divider label={initial.toUpperCase()} labelPosition="left" className="p-md" />
