@@ -1,4 +1,5 @@
 import { ErrorCard } from '@landing-pages/react/common/components';
+import { randomId } from '@mantine/hooks';
 import { useMemo } from 'react';
 import { useNewsApi } from '../hooks';
 import type { INews } from '../types';
@@ -9,17 +10,21 @@ export function RelatedPopularNews({ apiKey, category }: { apiKey: string; categ
   const { data, error, isError, isLoading, isSuccess } = useNewsApi({ apiKey, category });
   const emptyNews = useMemo(
     () =>
-      Array.from({ length: 4 }).fill({
-        author: '',
-        category: [],
-        description: '',
-        id: '',
-        image: '',
-        language: '',
-        published: '',
-        title: '',
-        url: '',
-      } as INews) as INews[],
+      // eslint-disable-next-line no-sparse-arrays
+      [, , ,].map(
+        () =>
+          ({
+            author: '',
+            category: [],
+            description: '',
+            id: randomId(),
+            image: '',
+            language: '',
+            published: '',
+            title: '',
+            url: '',
+          } as INews),
+      ) as INews[],
     [],
   );
 
