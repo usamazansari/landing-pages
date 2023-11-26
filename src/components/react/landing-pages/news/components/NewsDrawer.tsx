@@ -1,16 +1,18 @@
-import { Box, Divider, Drawer, Flex, Input, List, NavLink, ScrollArea, Text, useMantineTheme } from '@mantine/core';
+import { Box, Divider, Drawer, Flex, Highlight, Input, List, NavLink, ScrollArea, Text, useMantineTheme } from '@mantine/core';
 import { useViewportSize } from '@mantine/hooks';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useScreenSizeWatcher } from '../../../common/hooks';
 
 export function NewsDrawer({ categories = [], opened, close }: { categories: string[]; opened: boolean; close: () => void }) {
   const theme = useMantineTheme();
   const { width } = useViewportSize();
   const { isNarrowViewport } = useScreenSizeWatcher({ theme, width });
+  const [filteredCategories, setFilteredCategories] = useState<string[]>(categories);
+  const [filterText, setFilterText] = useState<string>('');
 
   const groupedCategories = useMemo(
-    () =>
-      categories
+    () => [
+      ...filteredCategories
         .sort((a, b) => a.localeCompare(b))
         .reduce((acc, category) => {
           acc.set(category.charAt(0).toLowerCase(), [
@@ -18,9 +20,15 @@ export function NewsDrawer({ categories = [], opened, close }: { categories: str
             { label: category.toUpperCase(), href: `/news/${category.toLowerCase().replace(/\s/g, '-')}` },
           ]);
           return acc;
-        }, new Map<string, { label: string; href: string }[]>()),
-    [],
+        }, new Map<string, { label: string; href: string }[]>())
+        .entries(),
+    ],
+    [filteredCategories],
   );
+
+  useEffect(() => {
+    setFilteredCategories(!filterText ? categories : categories.filter(category => category.toLowerCase().includes(filterText.toLowerCase())));
+  }, [categories, filterText]);
 
   return (
     <Drawer.Root opened={opened} onClose={close} size={isNarrowViewport ? '100%' : 'md'} scrollAreaComponent={ScrollArea.Autosize}>
@@ -35,7 +43,14 @@ export function NewsDrawer({ categories = [], opened, close }: { categories: str
               <Drawer.CloseButton />
             </Flex>
             <Box className="px-md">
-              <Input placeholder="Search across categories" />
+              <Input
+                value={filterText}
+                rightSection={<span className="material-icons">search</span>}
+                onChange={e => {
+                  setFilterText(e.currentTarget.value);
+                }}
+                placeholder="Search across categories"
+              />
             </Box>
             <Divider />
           </Flex>
@@ -47,7 +62,7 @@ export function NewsDrawer({ categories = [], opened, close }: { categories: str
                 itemWrapper: { width: '100%' },
                 itemLabel: { width: '100%' },
               }}>
-              {[...groupedCategories.entries()].map(([initial, categories]) => (
+              {groupedCategories.map(([initial, categories]) => (
                 <List.Item key={initial}>
                   <Divider label={initial.toUpperCase()} labelPosition="left" className="p-md" />
                   <List
@@ -57,7 +72,7 @@ export function NewsDrawer({ categories = [], opened, close }: { categories: str
                     }}>
                     {categories.map(({ label, href }) => (
                       <List.Item key={href}>
-                        <NavLink label={label} href={href} />
+                        <NavLink label={<Highlight highlight={filterText}>{label}</Highlight>} href={href} />
                       </List.Item>
                     ))}
                   </List>
@@ -67,7 +82,10 @@ export function NewsDrawer({ categories = [], opened, close }: { categories: str
           </Box>
           <Box className="grid sticky bottom-0 left-0 right-0" style={{ backgroundColor: 'var(--mantine-color-body)' }}>
             <Divider />
-            <Text m="md">{categories.length} categories fetched</Text>
+            <Flex align="center" gap="xs" p="md" justify="flex-end">
+              <span className="material-icons">info</span>
+              <Text c="dimmed">{filteredCategories.length} categories fetched</Text>
+            </Flex>
           </Box>
         </Drawer.Body>
       </Drawer.Content>
