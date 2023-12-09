@@ -6,7 +6,7 @@ const BASE_URL = 'https://api.currentsapi.services/v1';
 const USE_CACHE = false;
 
 export const useNewsApi = ({ apiKey, category }: { apiKey: string; category?: string }): QueryHooks<INewsResponse> => {
-  const endpoint = `${BASE_URL}/latest-news?apiKey=${apiKey}${!category ? '' : '&category=' + category}`;
+  const endpoint = `${BASE_URL}/latest-news?apiKey=${apiKey}&language=en${!category ? '' : '&category=' + category}`;
   const [data, setData] = useState<INewsResponse | null>(null);
   const [error, setError] = useState<Error | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -14,6 +14,7 @@ export const useNewsApi = ({ apiKey, category }: { apiKey: string; category?: st
 
   useEffect(() => {
     (async function () {
+      if (!apiKey) return;
       try {
         setIsLoading(true);
         const response = await fetch(endpoint, { cache: USE_CACHE ? 'force-cache' : 'no-cache' });
