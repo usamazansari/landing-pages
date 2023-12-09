@@ -2,9 +2,9 @@ import { DarkModeSwitch } from '@landing-pages/react/common/components';
 import { Box, Burger, Divider, Flex, UnstyledButton } from '@mantine/core';
 import { useState } from 'react';
 import { NewsDrawer } from './internal/NewsDrawer';
-import { useAvailableNewsCategoriesApi } from 'src/components/react/landing-pages/news/hooks';
+import { useAvailableNewsCategoriesApi } from '../hooks';
 
-export function NewsHeader({ apiKey }: { apiKey: string }) {
+export function NewsHeader() {
   const [opened, setOpened] = useState(false);
   const response = useAvailableNewsCategoriesApi();
 
