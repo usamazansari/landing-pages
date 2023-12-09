@@ -1,6 +1,23 @@
 import { Accordion, Box, Card, Code, Text } from '@mantine/core';
+import type { SerializedError } from '@reduxjs/toolkit';
+import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
+import { useMemo } from 'react';
 
-export function ErrorCard({ error }: { error: Error }) {
+function isFetchBaseQueryError(error?: FetchBaseQueryError | SerializedError): error is FetchBaseQueryError {
+  return !!(error as FetchBaseQueryError)?.status;
+}
+
+function isSerializedError(error?: FetchBaseQueryError | SerializedError): error is SerializedError {
+  return !!(error as SerializedError)?.stack;
+}
+
+export function ErrorCard({ error }: { error?: FetchBaseQueryError | SerializedError | Error }) {
+  const { stack, message } = useMemo(() => {
+    if (isFetchBaseQueryError(error)) return { stack: new Error(error.status.toString()).stack, message: error.status.toString() };
+    if (isSerializedError(error) || error instanceof Error) return { stack: error.stack, message: error.message };
+    const fallbackError = new Error('Unknown error');
+    return { stack: fallbackError.stack, message: fallbackError.message };
+  }, [error]);
   return (
     <Card withBorder>
       <Card.Section withBorder>
@@ -14,17 +31,17 @@ export function ErrorCard({ error }: { error: Error }) {
             <Accordion.Control>
               <Box className="grid gap-xs">
                 <Text className="leading-none" fw={500}>
-                  Error Fetching data
+                  Something went wrong!
                 </Text>
                 <Text size="xs" c="dimmed" className="leading-none">
-                  Click to view the error stacktrace
+                  {message}
                 </Text>
               </Box>
             </Accordion.Control>
             <Accordion.Panel>
               <Box className="grid gap-sm">
                 <Code p="md" block>
-                  {error.stack}
+                  {stack}
                 </Code>
               </Box>
             </Accordion.Panel>
