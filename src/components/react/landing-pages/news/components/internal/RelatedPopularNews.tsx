@@ -5,12 +5,11 @@ import { useNewsApi } from '../../hooks';
 import type { INews } from '../../types';
 import { NewsCarousel } from './NewsCarousel';
 import { NewsSection } from './NewsSection';
+import { useAppSelector } from '../../store';
 
-export function RelatedPopularNews({ apiKey, category }: { apiKey: string; category: string }) {
-  const { data, error, isError, isLoading, isSuccess } = useNewsApi({
-    apiKey,
-    category,
-  });
+export function RelatedPopularNews({ category }: { category: string }) {
+  const apiKey = useAppSelector(state => state.news.apiKey);
+  const { data, error, isError, isLoading, isSuccess } = useNewsApi({ apiKey, category });
   const emptyNews = useMemo(
     () =>
       // eslint-disable-next-line no-sparse-arrays
@@ -39,4 +38,3 @@ export function RelatedPopularNews({ apiKey, category }: { apiKey: string; categ
     </NewsSection>
   );
 }
-

@@ -1,10 +1,13 @@
-import { Anchor, Breadcrumbs, Card, Flex, ScrollArea, Space, Text } from '@mantine/core';
+import { Anchor, Box, Breadcrumbs, Card, Flex, ScrollArea, Space, Text } from '@mantine/core';
 import { useMemo } from 'react';
 import { useNewsApi } from '../hooks';
+import { useAppSelector } from '../store';
 import { NewsLayout } from './internal';
 import { RelatedPopularNews } from './internal/RelatedPopularNews';
 
-export function News({ apiKey, category = '' }: { apiKey: string; category?: string }) {
+export function News() {
+  const apiKey = useAppSelector(state => state.news.apiKey);
+  const category = useAppSelector(state => state.news.category);
   const response = useNewsApi({ apiKey, category });
 
   const items = useMemo(() => {
@@ -50,18 +53,30 @@ export function News({ apiKey, category = '' }: { apiKey: string; category?: str
   return (
     <ScrollArea h="100%">
       <Flex direction="column" gap="lg" className="container mx-auto my-lg">
-        <Space />
-        <Breadcrumbs>{breadCrumbItems}</Breadcrumbs>
-        <Card className="h-32 grid place-content-center mt-4" withBorder>
-          <Text ta="center">Advertisement</Text>
-        </Card>
-        <NewsLayout category={category} response={response} />
-        <Space style={{ margin: '0.5rem 0rem' }} />
-        <Text size="lg" fw={500}>
-          Related News
-        </Text>
-        <Space style={{ margin: '0.5rem 0rem' }} />
-        {!relatedPopularCategories.length ? null : relatedPopularCategories.map(c => <RelatedPopularNews key={c} apiKey={apiKey} category={c} />)}
+        <Box>
+          <Space />
+          <Breadcrumbs>{breadCrumbItems}</Breadcrumbs>
+        </Box>
+        <Box>
+          <Card className="h-32 grid place-content-center mt-4" withBorder>
+            <Text ta="center">Advertisement</Text>
+          </Card>
+        </Box>
+        <Box>
+          <NewsLayout category={category} response={response} />
+        </Box>
+        {!relatedPopularCategories.length ? null : (
+          <Box className="grid gap-md">
+            <Space style={{ margin: '0.5rem 0rem' }} />
+            <Text size="lg" fw={500}>
+              Related News
+            </Text>
+            <Space style={{ margin: '0.5rem 0rem' }} />
+            {relatedPopularCategories.map(c => (
+              <RelatedPopularNews key={c} category={c} />
+            ))}
+          </Box>
+        )}
       </Flex>
     </ScrollArea>
   );
