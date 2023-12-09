@@ -15,14 +15,6 @@ import { ColorSchemeScript } from '@mantine/core';
   </head>
 
   <body class="grid grid-rows-[auto_1fr_auto] h-screen text-sm relative">
-    <nav class="sticky top-0 left-0 right-0 z-10">
-      <slot name="nav" />
-    </nav>
-    <main class="overflow-hidden">
-      <slot />
-    </main>
-    <footer>
-      <slot name="footer" />
-    </footer>
+    <slot />
   </body>
 </html>
