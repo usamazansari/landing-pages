@@ -1,19 +1,15 @@
-import { Burger, Divider, Flex, UnstyledButton } from '@mantine/core';
-import { useEffect, useState } from 'react';
-import { DarkModeSwitch, Provider } from '../../../common/components';
-import { NewsDrawer } from './NewsDrawer';
+import { DarkModeSwitch } from '@landing-pages/react/common/components';
+import { Box, Burger, Divider, Flex, UnstyledButton } from '@mantine/core';
+import { useState } from 'react';
+import { NewsDrawer } from './internal/NewsDrawer';
+import { useAvailableNewsCategoriesApi } from 'src/components/react/landing-pages/news/hooks';
 
-export function NewsHeader({ categories }: { categories: string[] }) {
+export function NewsHeader({ apiKey }: { apiKey: string }) {
   const [opened, setOpened] = useState(false);
-  const [hydrated, setHydrated] = useState(false);
+  const response = useAvailableNewsCategoriesApi();
 
-  // NOTE: @usamazansari: Wait for hydration
-  useEffect(() => {
-    setHydrated(true);
-  }, []);
-
-  return !hydrated ? null : (
-    <Provider>
+  return (
+    <Box className="grid">
       <Flex gap="md" align="center" justify="space-between" py="lg" px="md" style={{ backgroundColor: 'var(--mantine-color-body)' }}>
         <Flex gap="md">
           <NewsDrawer
@@ -21,7 +17,7 @@ export function NewsHeader({ categories }: { categories: string[] }) {
             close={() => {
               setOpened(false);
             }}
-            categories={categories}
+            response={response}
           />
           <Burger
             opened={opened}
@@ -42,6 +38,6 @@ export function NewsHeader({ categories }: { categories: string[] }) {
         </Flex>
       </Flex>
       <Divider />
-    </Provider>
+    </Box>
   );
 }

@@ -1,9 +1,8 @@
-import { Provider } from '@landing-pages/react/common/components';
 import { Anchor, Breadcrumbs, Card, Flex, ScrollArea, Space, Text } from '@mantine/core';
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { useNewsApi } from '../hooks';
-import { NewsLayout } from './NewsLayout';
-import { RelatedPopularNews } from './RelatedPopularNews';
+import { NewsLayout } from './internal';
+import { RelatedPopularNews } from './internal/RelatedPopularNews';
 
 export function News({ apiKey, category = '' }: { apiKey: string; category?: string }) {
   const response = useNewsApi({ apiKey, category });
@@ -13,7 +12,11 @@ export function News({ apiKey, category = '' }: { apiKey: string; category?: str
     items.push({ title: '', icon: 'home', href: '/' });
     items.push({ title: 'News', icon: '', href: '/news' });
     if (!category) return items;
-    items.push({ title: category.toUpperCase(), icon: '', href: `/news/${category.toLowerCase().replace(/\s/g, '-')}` });
+    items.push({
+      title: category.toUpperCase(),
+      icon: '',
+      href: `/news/${category.toLowerCase().replace(/\s/g, '-')}`,
+    });
     return items;
   }, [category]);
 
@@ -45,23 +48,21 @@ export function News({ apiKey, category = '' }: { apiKey: string; category?: str
   }, [category, response?.data?.news]);
 
   return (
-    <Provider>
-      <ScrollArea h="100%">
-        <Flex direction="column" gap="lg" className="container mx-auto">
-          <Space />
-          <Breadcrumbs>{breadCrumbItems}</Breadcrumbs>
-          <Card className="h-32 grid place-content-center mt-4" withBorder>
-            <Text ta="center">Advertisement</Text>
-          </Card>
-          <NewsLayout category={category} response={response} />
-          <Space style={{ margin: '0.5rem 0rem' }} />
-          <Text size="lg" fw={500}>
-            Related News
-          </Text>
-          <Space style={{ margin: '0.5rem 0rem' }} />
-          {!relatedPopularCategories.length ? null : relatedPopularCategories.map(c => <RelatedPopularNews key={c} apiKey={apiKey} category={c} />)}
-        </Flex>
-      </ScrollArea>
-    </Provider>
+    <ScrollArea h="100%">
+      <Flex direction="column" gap="lg" className="container mx-auto my-lg">
+        <Space />
+        <Breadcrumbs>{breadCrumbItems}</Breadcrumbs>
+        <Card className="h-32 grid place-content-center mt-4" withBorder>
+          <Text ta="center">Advertisement</Text>
+        </Card>
+        <NewsLayout category={category} response={response} />
+        <Space style={{ margin: '0.5rem 0rem' }} />
+        <Text size="lg" fw={500}>
+          Related News
+        </Text>
+        <Space style={{ margin: '0.5rem 0rem' }} />
+        {!relatedPopularCategories.length ? null : relatedPopularCategories.map(c => <RelatedPopularNews key={c} apiKey={apiKey} category={c} />)}
+      </Flex>
+    </ScrollArea>
   );
 }

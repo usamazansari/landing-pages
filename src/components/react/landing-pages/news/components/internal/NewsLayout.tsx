@@ -4,7 +4,7 @@ import type { QueryHooks } from '@landing-pages/react/common/types';
 import { Box, useMantineTheme } from '@mantine/core';
 import { useListState, useViewportSize } from '@mantine/hooks';
 import { useMemo } from 'react';
-import type { INewsResponse } from '../types';
+import type { INewsResponse } from '../../types';
 import { NewsCarousel } from './NewsCarousel';
 import { NewsItem } from './NewsItem';
 import { NewsSection } from './NewsSection';

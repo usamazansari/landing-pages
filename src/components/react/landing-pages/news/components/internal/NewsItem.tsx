@@ -1,15 +1,11 @@
 import { Anchor, Badge, Box, Card, Flex, Image, Spoiler, Text } from '@mantine/core';
-import type { INews } from '../types';
+import type { INews } from '../../types';
 
 export function NewsItem({ newsItem, largeArea = false }: { newsItem: INews; largeArea?: boolean }) {
   return (
     <Card className="h-full" withBorder>
       <Card.Section>
-        <Image
-          h={largeArea ? 750 : 250}
-          src={newsItem.image}
-          fallbackSrc="https://img.freepik.com/free-vector/flat-design-no-data-illustration_23-2150527142.jpg"
-        />
+        <Image h={largeArea ? 750 : 250} src={newsItem.image} fallbackSrc="src/assets/news/no-news.webp" />
       </Card.Section>
       <Box mt="md" className="grid gap-md">
         <Anchor href={newsItem.url} target="_blank" fw="bold">

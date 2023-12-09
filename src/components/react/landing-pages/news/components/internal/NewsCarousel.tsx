@@ -4,7 +4,7 @@ import { Box, Flex, Text, useMantineTheme } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
 import Autoplay from 'embla-carousel-autoplay';
 import { useRef } from 'react';
-import type { INews } from '../types';
+import type { INews } from '../../types';
 import { NewsItem } from './NewsItem';
 
 export function NewsCarousel({ newsItemList = [] }: { newsItemList: INews[] }) {
