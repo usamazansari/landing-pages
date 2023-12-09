@@ -10,11 +10,16 @@ export function NewsPage({ apiKey }: { apiKey: string }) {
   return (
     <ErrorBoundary fallback={<ErrorBoundaryFallback />}>
       <MantineProvider theme={theme}>
-        <NewsHeader apiKey={apiKey} />
-        <News apiKey={apiKey} />
-        <NewsFooter />
+        <nav>
+          <NewsHeader apiKey={apiKey} />
+        </nav>
+        <main>
+          <News apiKey={apiKey} />
+        </main>
+        <footer>
+          <NewsFooter />
+        </footer>
       </MantineProvider>
     </ErrorBoundary>
   );
 }
-

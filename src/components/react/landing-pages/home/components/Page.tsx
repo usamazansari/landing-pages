@@ -10,11 +10,16 @@ export function HomePage() {
   return (
     <ErrorBoundary fallback={<ErrorBoundaryFallback />}>
       <MantineProvider theme={theme}>
-        <HomeHeader />
-        <Home />
-        <HomeFooter />
+        <nav>
+          <HomeHeader />
+        </nav>
+        <main>
+          <Home />
+        </main>
+        <footer>
+          <HomeFooter />
+        </footer>
       </MantineProvider>
     </ErrorBoundary>
   );
 }
-
