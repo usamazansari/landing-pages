@@ -1,9 +1,8 @@
-import { Anchor, Divider, Flex, Text } from '@mantine/core';
-import { Provider } from '../../../common/components';
+import { Anchor, Box, Divider, Flex, Text } from '@mantine/core';
 
 export function HomeFooter() {
   return (
-    <Provider>
+    <Box className="grid">
       <Divider />
       <Flex gap="xs" px="md" justify="flex-end" align="center" className="h-16">
         <Text>Made by</Text>
@@ -11,6 +10,6 @@ export function HomeFooter() {
           @usamazansari
         </Anchor>
       </Flex>
-    </Provider>
+    </Box>
   );
 }
