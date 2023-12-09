@@ -1,10 +1,10 @@
-import { Box, Divider, Drawer, Flex, Highlight, Input, List, NavLink, ScrollArea, Skeleton, Text, useMantineTheme } from '@mantine/core';
+import { ErrorCard } from '@landing-pages/react/common/components';
+import type { QueryHooks } from '@landing-pages/react/common/types';
+import { Box, CloseButton, Divider, Drawer, Flex, Highlight, List, NavLink, ScrollArea, Skeleton, Text, TextInput, useMantineTheme } from '@mantine/core';
 import { useViewportSize } from '@mantine/hooks';
 import { useEffect, useMemo, useState } from 'react';
-import { useScreenSizeWatcher } from '../../../../common/hooks';
-import type { QueryHooks } from '@landing-pages/react/common/types';
 import type { INewsCategoryResponse } from 'src/components/react/landing-pages/news/types';
-import { ErrorCard } from '@landing-pages/react/common/components';
+import { useScreenSizeWatcher } from '../../../../common/hooks';
 
 export function NewsDrawer({ response, opened, close }: { response: QueryHooks<INewsCategoryResponse>; opened: boolean; close: () => void }) {
   const theme = useMantineTheme();
@@ -57,9 +57,9 @@ export function NewsDrawer({ response, opened, close }: { response: QueryHooks<I
               <Drawer.CloseButton />
             </Flex>
             <Box className="px-md pb-md">
-              <Input
+              <TextInput
                 value={filterText}
-                rightSection={<span className="material-icons">search</span>}
+                rightSection={!filterText ? <span className="material-icons">search</span> : <CloseButton onClick={() => setFilterText('')} />}
                 onChange={e => {
                   setFilterText(e.currentTarget.value);
                 }}
