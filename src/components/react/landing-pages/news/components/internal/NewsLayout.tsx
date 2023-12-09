@@ -1,21 +1,24 @@
 import { ErrorCard } from '@landing-pages/react/common/components';
 import { useScreenSizeWatcher } from '@landing-pages/react/common/hooks';
-import type { QueryHooks } from '@landing-pages/react/common/types';
 import { Box, useMantineTheme } from '@mantine/core';
 import { useListState, useViewportSize } from '@mantine/hooks';
-import { useMemo } from 'react';
-import type { INewsResponse } from '../../types';
+import { useEffect, useMemo } from 'react';
+import { useAppDispatch, useAppSelector, useGetNewsQuery, setRelatedPopularCategories } from '../../store';
 import { NewsCarousel } from './NewsCarousel';
 import { NewsItem } from './NewsItem';
 import { NewsSection } from './NewsSection';
 import { NewsSkeleton } from './NewsSkeleton';
 
-export function NewsLayout({ category, response }: { category: string; response: QueryHooks<INewsResponse> }) {
+export function NewsLayout() {
   const theme = useMantineTheme();
   const { width } = useViewportSize();
   const { isNarrowViewport } = useScreenSizeWatcher({ theme, width });
 
-  const { data, error, isError, isLoading, isSuccess } = response;
+  const dispatch = useAppDispatch();
+  const apiKey = useAppSelector(state => state.news.apiKey);
+  const category = useAppSelector(state => state.news.selectedCategory);
+  const { data, error, isError, isLoading, isSuccess } = useGetNewsQuery({ apiKey, category });
+
   const [latestNewsGridAreaList] = useListState([
     'top-middle-left-center',
     'top-right',
@@ -31,6 +34,25 @@ export function NewsLayout({ category, response }: { category: string; response:
 
   const headlines = useMemo(() => (data?.news ?? []).slice(0, latestNewsGridAreaList.length - 1), [data, latestNewsGridAreaList]);
   const otherNews = useMemo(() => (data?.news ?? []).slice(latestNewsGridAreaList.length - 1), [data, latestNewsGridAreaList]);
+
+  useEffect(() => {
+    if (isSuccess) {
+      const categories = data?.news
+        ?.map(article => article.category)
+        .flat()
+        .filter(c => c !== category);
+      const relatedCategories = Object.entries(
+        categories?.reduce((acc: Record<string, number>, category) => {
+          acc[category] = (acc[category] || 0) + 1;
+          return acc;
+        }, {}) ?? {},
+      )
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 2)
+        .map(([category]) => category);
+      dispatch(setRelatedPopularCategories({ categories: relatedCategories }));
+    }
+  }, [category, data?.news, dispatch, isSuccess]);
 
   return (
     <NewsSection name={category}>

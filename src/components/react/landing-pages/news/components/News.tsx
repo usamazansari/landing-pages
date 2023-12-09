@@ -1,14 +1,11 @@
 import { Anchor, Box, Breadcrumbs, Card, Flex, ScrollArea, Space, Text } from '@mantine/core';
 import { useMemo } from 'react';
-import { useNewsApi } from '../hooks';
 import { useAppSelector } from '../store';
-import { NewsLayout } from './internal';
-import { RelatedPopularNews } from './internal/RelatedPopularNews';
+import { NewsLayout, RelatedPopularNews } from './internal';
 
 export function News() {
-  const apiKey = useAppSelector(state => state.news.apiKey);
-  const category = useAppSelector(state => state.news.category);
-  const response = useNewsApi({ apiKey, category });
+  const category = useAppSelector(state => state.news.selectedCategory);
+  const relatedPopularCategories = useAppSelector(state => state.news.relatedPopularCategories);
 
   const items = useMemo(() => {
     const items = [] as { title: string; icon: string; href: string }[];
@@ -34,22 +31,6 @@ export function News() {
     ));
   }, [items]);
 
-  const relatedPopularCategories = useMemo(() => {
-    const categories = response?.data?.news
-      ?.map(article => article.category)
-      .flat()
-      .filter(c => c !== category);
-    return Object.entries(
-      categories?.reduce((acc: Record<string, number>, category) => {
-        acc[category] = (acc[category] || 0) + 1;
-        return acc;
-      }, {}) ?? {},
-    )
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 2)
-      .map(([category]) => category);
-  }, [category, response?.data?.news]);
-
   return (
     <ScrollArea h="100%">
       <Flex direction="column" gap="lg" className="container mx-auto my-lg">
@@ -63,7 +44,7 @@ export function News() {
           </Card>
         </Box>
         <Box>
-          <NewsLayout category={category} response={response} />
+          <NewsLayout />
         </Box>
         {!relatedPopularCategories.length ? null : (
           <Box className="grid gap-md">

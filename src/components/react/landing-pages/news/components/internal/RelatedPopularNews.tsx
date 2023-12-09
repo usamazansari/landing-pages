@@ -1,15 +1,15 @@
 import { ErrorCard } from '@landing-pages/react/common/components';
 import { randomId } from '@mantine/hooks';
 import { useMemo } from 'react';
-import { useNewsApi } from '../../hooks';
 import type { INews } from '../../types';
 import { NewsCarousel } from './NewsCarousel';
 import { NewsSection } from './NewsSection';
-import { useAppSelector } from '../../store';
+import { useAppSelector, useGetNewsQuery } from '../../store';
 
 export function RelatedPopularNews({ category }: { category: string }) {
   const apiKey = useAppSelector(state => state.news.apiKey);
-  const { data, error, isError, isLoading, isSuccess } = useNewsApi({ apiKey, category });
+  const { data, error, isError, isLoading, isSuccess } = useGetNewsQuery({ apiKey, category });
+
   const emptyNews = useMemo(
     () =>
       // eslint-disable-next-line no-sparse-arrays
