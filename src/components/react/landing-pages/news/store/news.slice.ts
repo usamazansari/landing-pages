@@ -3,9 +3,10 @@ import type { INewsState } from './news.store';
 import { newsReducers } from './news.reducer';
 
 const initialState: INewsState = {
-  category: '',
+  selectedCategory: '',
   language: 'en',
   apiKey: '',
+  relatedPopularCategories: [],
 };
 
 const newsSlice = createSlice({
@@ -16,5 +17,5 @@ const newsSlice = createSlice({
   },
 });
 
-export const { setCategory, setAPIKey } = newsSlice.actions;
+export const { setCategory, setAPIKey, setRelatedPopularCategories } = newsSlice.actions;
 export const newsReducer = newsSlice.reducer;

@@ -6,6 +6,9 @@ export const newsReducers = {
     state.apiKey = action.payload.apiKey;
   },
   setCategory(state: INewsState, action: PayloadAction<{ category: string }>) {
-    state.category = action.payload.category;
+    state.selectedCategory = action.payload.category;
+  },
+  setRelatedPopularCategories(state: INewsState, action: PayloadAction<{ categories: string[] }>) {
+    state.relatedPopularCategories = action.payload.categories;
   },
 };
