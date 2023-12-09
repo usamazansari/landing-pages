@@ -70,13 +70,14 @@ export function NewsDrawer({ response, opened, close }: { response: QueryHooks<I
           </Flex>
         </Drawer.Header>
         <Drawer.Body p={0} className="relative">
-          {isLoading
-            ? [, , , ,].map((_, index) => (
-                <Box className="grid gap-md">
-                  <Skeleton key={index} height={16} />
-                </Box>
-              ))
-            : null}
+          {isLoading ? (
+            <Box className="grid gap-md p-md">
+              {Array.from({ length: 5 }).map((_, index) => (
+                // eslint-disable-next-line react/no-array-index-key
+                <Skeleton key={`news-drawer-skeleton-${index}`} height={16} />
+              ))}
+            </Box>
+          ) : null}
           {isSuccess ? (
             <Box className="grid gap-md">
               <List
@@ -111,14 +112,31 @@ export function NewsDrawer({ response, opened, close }: { response: QueryHooks<I
 
           <Box className="grid sticky bottom-0 left-0 right-0" style={{ backgroundColor: 'var(--mantine-color-body)' }}>
             <Divider />
-            <Flex align="center" gap="xs" p="md" justify="flex-end">
-              <span className="material-icons">info</span>
-              <Text c="dimmed">{filteredCategories.length} categories fetched</Text>
-            </Flex>
+            {isLoading ? (
+              <Flex align="center" gap="xs" p="md" justify="flex-end">
+                <span className="material-icons animate-spin">autorenew</span>
+                <Text c="dimmed">Fetching categories</Text>
+              </Flex>
+            ) : null}
+            {isSuccess ? (
+              <Flex align="center" gap="xs" p="md" justify="flex-end">
+                <span className="material-icons">info</span>
+                <Text c="dimmed">{filteredCategories.length} categories fetched</Text>
+              </Flex>
+            ) : null}
+            {isError ? (
+              <Flex align="center" gap="xs" p="md" justify="flex-end">
+                <Text className="grid place-content-center leading-[normal]" c="red">
+                  <span className="material-icons">warning</span>
+                </Text>
+                <Text className="leading-[normal]" c="red">
+                  Unable to fetch categories
+                </Text>
+              </Flex>
+            ) : null}
           </Box>
         </Drawer.Body>
       </Drawer.Content>
     </Drawer.Root>
   );
 }
-
