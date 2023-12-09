@@ -35,58 +35,62 @@ export function NewsLayout({ category, response }: { category: string; response:
   return (
     <NewsSection name={category}>
       <Box className="grid gap-md">
-        <Box
-          className="grid gap-xl"
-          style={{
-            gridTemplateAreas: isNarrowViewport
-              ? `
-                'top-middle-left-center'
-                'top-right'
-                'top-middle-right'
-                'middle-left'
-                'middle-center'
-                'middle-right'
-                'bottom-left'
-                'bottom-middle-left'
-                'bottom-middle-right-center'
-                'carousel'
-              `
-              : `
-                'top-middle-left-center top-middle-left-center top-right'
-                'top-middle-left-center top-middle-left-center top-middle-right'
-                'middle-left middle-center middle-right'
-                'bottom-middle-left bottom-middle-right-center bottom-middle-right-center'
-                'bottom-left bottom-middle-right-center bottom-middle-right-center'
-                'carousel carousel carousel'
-              `,
-          }}>
-          {isLoading
-            ? latestNewsGridAreaList.map(area => (
-                <Box key={area} style={{ gridArea: area }}>
-                  <NewsSkeleton />
-                </Box>
-              ))
-            : null}
-          {isSuccess ? (
-            <>
-              {headlines.map((newsItem, index) => (
-                <Box key={newsItem.id} style={{ gridArea: latestNewsGridAreaList[index] }}>
-                  <NewsItem
-                    newsItem={newsItem}
-                    largeArea={!isNarrowViewport ? ['top-middle-left-center', 'bottom-middle-right-center'].includes(latestNewsGridAreaList[index]) : false}
-                  />
-                </Box>
-              ))}
+        {isError ? (
+          <Box className="grid w-full h-full">
+            <ErrorCard error={error} />
+          </Box>
+        ) : (
+          <Box
+            className="grid gap-xl"
+            style={{
+              gridTemplateAreas: isNarrowViewport
+                ? `
+              'top-middle-left-center'
+              'top-right'
+              'top-middle-right'
+              'middle-left'
+              'middle-center'
+              'middle-right'
+              'bottom-left'
+              'bottom-middle-left'
+              'bottom-middle-right-center'
+              'carousel'
+            `
+                : `
+              'top-middle-left-center top-middle-left-center top-right'
+              'top-middle-left-center top-middle-left-center top-middle-right'
+              'middle-left middle-center middle-right'
+              'bottom-middle-left bottom-middle-right-center bottom-middle-right-center'
+              'bottom-left bottom-middle-right-center bottom-middle-right-center'
+              'carousel carousel carousel'
+            `,
+            }}>
+            {isLoading
+              ? latestNewsGridAreaList.map(area => (
+                  <Box key={area} style={{ gridArea: area }}>
+                    <NewsSkeleton />
+                  </Box>
+                ))
+              : null}
+            {isSuccess ? (
+              <>
+                {headlines.map((newsItem, index) => (
+                  <Box key={newsItem.id} style={{ gridArea: latestNewsGridAreaList[index] }}>
+                    <NewsItem
+                      newsItem={newsItem}
+                      largeArea={!isNarrowViewport ? ['top-middle-left-center', 'bottom-middle-right-center'].includes(latestNewsGridAreaList[index]) : false}
+                    />
+                  </Box>
+                ))}
 
-              <Box style={{ gridArea: latestNewsGridAreaList.at(-1) }}>
-                <NewsCarousel newsItemList={otherNews} />
-              </Box>
-            </>
-          ) : null}
-          {isError ? <ErrorCard error={error} /> : null}
-        </Box>
+                <Box style={{ gridArea: latestNewsGridAreaList.at(-1) }}>
+                  <NewsCarousel newsItemList={otherNews} />
+                </Box>
+              </>
+            ) : null}
+          </Box>
+        )}
       </Box>
     </NewsSection>
   );
 }
-
