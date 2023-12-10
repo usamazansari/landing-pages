@@ -2,11 +2,9 @@ import { DarkModeSwitch } from '@landing-pages/react/common/components';
 import { Box, Burger, Divider, Flex, UnstyledButton } from '@mantine/core';
 import { useState } from 'react';
 import { NewsDrawer } from './internal/NewsDrawer';
-import { useAvailableNewsCategoriesApi } from '../hooks';
 
 export function NewsHeader() {
   const [opened, setOpened] = useState(false);
-  const response = useAvailableNewsCategoriesApi();
 
   return (
     <Box className="grid">
@@ -17,7 +15,6 @@ export function NewsHeader() {
             close={() => {
               setOpened(false);
             }}
-            response={response}
           />
           <Burger
             opened={opened}
