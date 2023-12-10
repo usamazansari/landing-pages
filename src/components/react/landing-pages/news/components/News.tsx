@@ -1,28 +1,25 @@
-import { Anchor, Box, Breadcrumbs, Card, Flex, ScrollArea, Space, Text } from '@mantine/core';
+import { Anchor, Box, Breadcrumbs, Button, Card, Flex, ScrollArea, Space, Text } from '@mantine/core';
 import { useMemo } from 'react';
-import { useAppSelector } from '../store';
+import { setShouldRefetch, useAppDispatch, useAppSelector } from '../store';
 import { NewsLayout, RelatedPopularNews } from './internal';
 
 export function News() {
+  const dispatch = useAppDispatch();
   const category = useAppSelector(state => state.news.selectedCategory);
   const relatedPopularCategories = useAppSelector(state => state.news.relatedPopularCategories);
 
   const items = useMemo(() => {
-    const items = [] as { title: string; icon: string; href: string }[];
+    const items = [] as { title: string; icon: string; href?: string }[];
     items.push({ title: '', icon: 'home', href: '/' });
     items.push({ title: 'News', icon: '', href: '/news' });
     if (!category) return items;
-    items.push({
-      title: category.toUpperCase(),
-      icon: '',
-      href: `/news/${category.toLowerCase().replace(/\s/g, '-')}`,
-    });
+    items.push({ title: category.toUpperCase(), icon: '' });
     return items;
   }, [category]);
 
   const breadCrumbItems = useMemo(() => {
     return items.map(item => (
-      <Anchor key={item.href} href={item.href} underline="never">
+      <Anchor key={item.title.toLowerCase()} href={item?.href} underline="never">
         <Flex align="center" gap="xs">
           {!item.icon ? null : <span className="material-icons">{item.icon}</span>}
           {!item.title ? null : <Text>{item.title}</Text>}
@@ -36,7 +33,23 @@ export function News() {
       <Flex direction="column" gap="lg" className="container mx-auto my-lg">
         <Box>
           <Space />
-          <Breadcrumbs>{breadCrumbItems}</Breadcrumbs>
+          <Flex align="center" justify="space-between">
+            <Breadcrumbs>{breadCrumbItems}</Breadcrumbs>
+            <Button
+              variant="subtle"
+              onClick={() => {
+                dispatch(setShouldRefetch(true));
+              }}>
+              <Flex align="center" gap="sm">
+                <Text className=" leading-[normal] flex items-center">
+                  <span className="material-icons">refresh</span>
+                </Text>
+                <Text fw={500} className="leading-[normal] flex items-center">
+                  Refresh
+                </Text>
+              </Flex>
+            </Button>
+          </Flex>
         </Box>
         <Box>
           <Card className="h-32 grid place-content-center mt-4" withBorder>
