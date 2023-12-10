@@ -25,7 +25,7 @@ export function NewsCarousel({ newsItemList = [] }: { newsItemList: INews[] }) {
         <Carousel
           align="start"
           slideGap="md"
-          slideSize={isNarrow ? '85%' : '30%'}
+          slideSize={isNarrow ? '85%' : '35%'}
           dragFree
           loop
           plugins={[autoplay.current]}
