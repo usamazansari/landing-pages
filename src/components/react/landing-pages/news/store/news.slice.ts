@@ -7,6 +7,7 @@ const initialState: INewsState = {
   language: 'en',
   apiKey: '',
   relatedPopularCategories: [],
+  shouldRefetch: false,
 };
 
 const newsSlice = createSlice({
@@ -17,5 +18,5 @@ const newsSlice = createSlice({
   },
 });
 
-export const { setCategory, setAPIKey, setRelatedPopularCategories } = newsSlice.actions;
+export const { setSelectedCategory, setAPIKey, setRelatedPopularCategories, setShouldRefetch } = newsSlice.actions;
 export const newsReducer = newsSlice.reducer;

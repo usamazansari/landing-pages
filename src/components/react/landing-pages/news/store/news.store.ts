@@ -7,6 +7,7 @@ export interface INewsState {
   relatedPopularCategories: string[];
   language: string;
   apiKey: string;
+  shouldRefetch: boolean;
 }
 
 export const combinedReducers = combineReducers({
