@@ -12,7 +12,7 @@ export function NewsPage({ apiKey }: { apiKey: string }) {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    dispatch(setAPIKey({ apiKey }));
+    dispatch(setAPIKey(apiKey));
   }, [apiKey, dispatch]);
 
   return (
