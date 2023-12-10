@@ -3,11 +3,12 @@ import { useScreenSizeWatcher } from '@landing-pages/react/common/hooks';
 import { Box, useMantineTheme } from '@mantine/core';
 import { useListState, useViewportSize } from '@mantine/hooks';
 import { useEffect, useMemo } from 'react';
-import { useAppDispatch, useAppSelector, useGetNewsQuery, setRelatedPopularCategories } from '../../store';
+import { useAppDispatch, useAppSelector, useGetNewsQuery, setRelatedPopularCategories, setShouldRefetch } from '../../store';
 import { NewsCarousel } from './NewsCarousel';
 import { NewsItem } from './NewsItem';
 import { NewsSection } from './NewsSection';
 import { NewsSkeleton } from './NewsSkeleton';
+import { NewsCategoryMapper } from '../../utils';
 
 export function NewsLayout() {
   const theme = useMantineTheme();
@@ -17,7 +18,13 @@ export function NewsLayout() {
   const dispatch = useAppDispatch();
   const apiKey = useAppSelector(state => state.news.apiKey);
   const category = useAppSelector(state => state.news.selectedCategory);
-  const { data, error, isError, isLoading, isSuccess } = useGetNewsQuery({ apiKey, category });
+  const shouldRefetch = useAppSelector(state => state.news.shouldRefetch);
+  const { data, error, isError, isLoading, isSuccess, refetch } = useGetNewsQuery(
+    { apiKey, category },
+    {
+      skip: !apiKey,
+    },
+  );
 
   const [latestNewsGridAreaList] = useListState([
     'top-middle-left-center',
@@ -32,8 +39,18 @@ export function NewsLayout() {
     'carousel',
   ]);
 
-  const headlines = useMemo(() => (data?.news ?? []).slice(0, latestNewsGridAreaList.length - 1), [data, latestNewsGridAreaList]);
-  const otherNews = useMemo(() => (data?.news ?? []).slice(latestNewsGridAreaList.length - 1), [data, latestNewsGridAreaList]);
+  const headlines = useMemo(
+    () => NewsCategoryMapper((data?.news ?? []).slice(0, latestNewsGridAreaList.length - 1)),
+    [data?.news, latestNewsGridAreaList.length],
+  );
+  const otherNews = useMemo(() => NewsCategoryMapper((data?.news ?? []).slice(latestNewsGridAreaList.length - 1)), [data?.news, latestNewsGridAreaList.length]);
+
+  useEffect(() => {
+    if (shouldRefetch) {
+      refetch();
+      dispatch(setShouldRefetch(false));
+    }
+  }, [dispatch, refetch, shouldRefetch]);
 
   useEffect(() => {
     if (isSuccess) {
@@ -50,7 +67,7 @@ export function NewsLayout() {
         .sort((a, b) => b[1] - a[1])
         .slice(0, 2)
         .map(([category]) => category);
-      dispatch(setRelatedPopularCategories({ categories: relatedCategories }));
+      dispatch(setRelatedPopularCategories(relatedCategories));
     }
   }, [category, data?.news, dispatch, isSuccess]);
 
