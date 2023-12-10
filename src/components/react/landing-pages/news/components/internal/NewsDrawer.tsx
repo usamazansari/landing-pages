@@ -1,39 +1,37 @@
-import { ErrorCard } from '@landing-pages/react/common/components';
-import type { QueryHooks } from '@landing-pages/react/common/types';
 import { Box, CloseButton, Divider, Drawer, Flex, Highlight, List, NavLink, ScrollArea, Skeleton, Text, TextInput, useMantineTheme } from '@mantine/core';
 import { useViewportSize } from '@mantine/hooks';
 import { useEffect, useMemo, useState } from 'react';
-import type { INewsCategoryResponse } from 'src/components/react/landing-pages/news/types';
-import { useScreenSizeWatcher } from '../../../../common/hooks';
+import { useScreenSizeWatcher } from '@landing-pages/react/common/hooks';
+import { setSelectedCategory, useAppDispatch, useAppSelector, useGetAvailableNewsCategoriesQuery } from '../../store';
+import { ErrorCard } from '@landing-pages/react/common/components';
 
-export function NewsDrawer({ response, opened, close }: { response: QueryHooks<INewsCategoryResponse>; opened: boolean; close: () => void }) {
+export function NewsDrawer({ opened, close }: { opened: boolean; close: () => void }) {
   const theme = useMantineTheme();
   const { width } = useViewportSize();
   const { isNarrowViewport } = useScreenSizeWatcher({ theme, width });
+  const dispatch = useAppDispatch();
+  const selectedCategory = useAppSelector(state => state.news.selectedCategory);
 
-  const { data, error, isError, isLoading, isSuccess } = response;
+  const { data, error, isError, isLoading, isSuccess } = useGetAvailableNewsCategoriesQuery();
 
   const [filteredCategories, setFilteredCategories] = useState<string[]>([]);
   const [filterText, setFilterText] = useState<string>('');
 
-  const groupedCategories = useMemo(
-    () => [
+  const groupedCategories = useMemo(() => {
+    return [
       ...filteredCategories
-        .sort((a, b) => a.localeCompare(b))
         .reduce((acc, category) => {
           acc.set(category.charAt(0).toLowerCase(), [
             ...(acc.get(category.charAt(0).toLowerCase()) || []),
             {
               label: category.toUpperCase(),
-              href: `/news/${category.toLowerCase().replace(/\s/g, '-')}`,
             },
           ]);
           return acc;
-        }, new Map<string, { label: string; href: string }[]>())
+        }, new Map<string, { label: string }[]>())
         .entries(),
-    ],
-    [filteredCategories],
-  );
+    ].sort((a, b) => a[0].localeCompare(b[0]));
+  }, [filteredCategories]);
 
   useEffect(() => {
     setFilteredCategories(
@@ -87,7 +85,14 @@ export function NewsDrawer({ response, opened, close }: { response: QueryHooks<I
                 }}>
                 <Divider className="p-md" />
                 <List.Item>
-                  <NavLink label="HOME" href="/news" />
+                  <NavLink
+                    variant={selectedCategory === '' ? 'light' : 'subtle'}
+                    label="HOME"
+                    href="/news"
+                    onClick={() => {
+                      dispatch(setSelectedCategory(''));
+                    }}
+                  />
                 </List.Item>
                 {groupedCategories.map(([initial, categories]) => (
                   <List.Item key={initial}>
@@ -97,9 +102,16 @@ export function NewsDrawer({ response, opened, close }: { response: QueryHooks<I
                         itemWrapper: { width: '100%' },
                         itemLabel: { width: '100%' },
                       }}>
-                      {categories.map(({ label, href }) => (
-                        <List.Item key={href}>
-                          <NavLink label={<Highlight highlight={filterText}>{label}</Highlight>} href={href} />
+                      {categories.map(({ label }) => (
+                        <List.Item key={label}>
+                          <NavLink
+                            variant={label.toLowerCase().replace(/\s/g, '-') === selectedCategory ? 'light' : 'subtle'}
+                            label={<Highlight highlight={filterText}>{label}</Highlight>}
+                            onClick={() => {
+                              dispatch(setSelectedCategory(label.toLowerCase().replace(/\s/g, '-')));
+                              close();
+                            }}
+                          />
                         </List.Item>
                       ))}
                     </List>
@@ -121,7 +133,9 @@ export function NewsDrawer({ response, opened, close }: { response: QueryHooks<I
             {isSuccess ? (
               <Flex align="center" gap="xs" p="md" justify="flex-end">
                 <span className="material-icons">info</span>
-                <Text c="dimmed">{filteredCategories.length} categories fetched</Text>
+                <Text c="dimmed">
+                  {filteredCategories.length} {`${filteredCategories.length === 1 ? 'category' : 'categories'}`} available
+                </Text>
               </Flex>
             ) : null}
             {isError ? (
