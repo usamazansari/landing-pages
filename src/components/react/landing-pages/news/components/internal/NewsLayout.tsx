@@ -104,14 +104,13 @@ export function NewsLayout() {
               'carousel carousel carousel'
             `,
             }}>
-            {isLoading
-              ? latestNewsGridAreaList.map(area => (
-                  <Box key={area} style={{ gridArea: area }}>
-                    <NewsSkeleton />
-                  </Box>
-                ))
-              : null}
-            {isSuccess ? (
+            {isLoading ? (
+              latestNewsGridAreaList.map(area => (
+                <Box key={area} style={{ gridArea: area }}>
+                  <NewsSkeleton largeArea={!isNarrowViewport ? ['top-middle-left-center', 'bottom-middle-right-center'].includes(area) : false} />
+                </Box>
+              ))
+            ) : isSuccess ? (
               <>
                 {headlines.map((newsItem, index) => (
                   <Box key={newsItem.id} style={{ gridArea: latestNewsGridAreaList[index] }}>
