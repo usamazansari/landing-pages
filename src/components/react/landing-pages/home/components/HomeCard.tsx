@@ -12,7 +12,7 @@ export function HomeCard({ card }: { card: IHomeCard }) {
         <Flex direction="column" gap="md">
           <Flex align="center" justify="space-between">
             <Flex align="center" gap="xs">
-              <Text className=" leading-[normal] flex items-center">
+              <Text className="leading-[normal] flex items-center">
                 <span className="material-icons">{card.icon}</span>
               </Text>
               <Text fw={500} className="leading-[normal] flex items-center">
