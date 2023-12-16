@@ -1,10 +1,10 @@
 import { Box, Card, Flex, Skeleton } from '@mantine/core';
 
-export function NewsSkeleton() {
+export function NewsSkeleton({ largeArea }: { largeArea: boolean }) {
   return (
     <Card withBorder>
       <Card.Section>
-        <Skeleton height={250} />
+        <Skeleton height={largeArea ? 750 : 250} />
       </Card.Section>
       <Box mt="md" className="grid gap-md">
         <Skeleton height={24} />
