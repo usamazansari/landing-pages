@@ -1,7 +1,3 @@
-import { ErrorBoundary, ErrorBoundaryFallback } from '@landing-pages/react/common/components';
-import { theme } from '@landing-pages/react/common/config';
-import { MantineProvider } from '@mantine/core';
-import '@mantine/core/styles.css';
 import { useEffect } from 'react';
 import { setAPIKey, useAppDispatch } from '../store';
 import { News } from './News';
@@ -16,18 +12,16 @@ export function NewsPage({ apiKey }: { apiKey: string }) {
   }, [apiKey, dispatch]);
 
   return (
-    <ErrorBoundary fallback={<ErrorBoundaryFallback />}>
-      <MantineProvider theme={theme}>
-        <nav className="sticky top-0 left-0 right-0 z-10">
-          <NewsHeader />
-        </nav>
-        <main>
-          <News />
-        </main>
-        <footer>
-          <NewsFooter />
-        </footer>
-      </MantineProvider>
-    </ErrorBoundary>
+    <>
+      <nav className="sticky top-0 left-0 right-0 z-10">
+        <NewsHeader />
+      </nav>
+      <main>
+        <News />
+      </main>
+      <footer>
+        <NewsFooter />
+      </footer>
+    </>
   );
 }
