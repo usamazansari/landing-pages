@@ -1,5 +1,4 @@
-export * from "./Home";
-export * from "./HomeFooter";
-export * from "./HomeHeader";
-export * from "./Page";
-
+export * from './Home';
+export * from './HomeFooter';
+export * from './HomeHeader';
+export * from './HomePage';
