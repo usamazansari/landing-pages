@@ -18,7 +18,7 @@ export function NewsPage({ apiKey }: { apiKey: string }) {
   return (
     <ErrorBoundary fallback={<ErrorBoundaryFallback />}>
       <MantineProvider theme={theme}>
-        <nav>
+        <nav className="sticky top-0 left-0 right-0 z-10">
           <NewsHeader />
         </nav>
         <main>
