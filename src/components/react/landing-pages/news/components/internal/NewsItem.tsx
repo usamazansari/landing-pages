@@ -2,6 +2,7 @@ import { Anchor, Badge, Box, Card, Flex, Image, Spoiler, Text } from '@mantine/c
 import { useWindowScroll } from '@mantine/hooks';
 import { setSelectedCategory, useAppDispatch } from 'src/components/react/landing-pages/news/store';
 import type { INews } from '../../types';
+import noNewsImage from '../../../../../../assets/news/no-news.webp';
 
 export function NewsItem({ newsItem, largeArea = false }: { newsItem: INews; largeArea?: boolean }) {
   const dispatch = useAppDispatch();
@@ -10,7 +11,7 @@ export function NewsItem({ newsItem, largeArea = false }: { newsItem: INews; lar
   return (
     <Card className="h-full" withBorder>
       <Card.Section>
-        <Image h={largeArea ? 750 : 250} src={newsItem.image} fallbackSrc="src/assets/news/no-news.webp" />
+        <Image h={largeArea ? 750 : 250} src={newsItem.image} fallbackSrc={noNewsImage.src} alt={newsItem.title} />
       </Card.Section>
       <Box mt="md" className="grid gap-md">
         <Anchor href={newsItem.url} target="_blank" fw="bold">
