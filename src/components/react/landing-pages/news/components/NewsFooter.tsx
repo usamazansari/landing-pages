@@ -5,7 +5,7 @@ export function NewsFooter() {
     <Box className="grid">
       <Divider />
       <Flex gap="xs" px="md" py="lg" justify="space-between" align="center">
-        <Flex gap="xs" direction="column">
+        <Flex direction="column">
           <Flex gap="xs" align="center">
             <Text>Powered by</Text>
             <Anchor href="https://currentsapi.services/en" target="_blank" underline="hover" className="underline-offset-2">
