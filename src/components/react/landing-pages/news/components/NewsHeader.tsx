@@ -26,7 +26,7 @@ export function NewsHeader() {
             title="Toggle Sidebar"
             style={{ alignSelf: 'center' }}
           />
-          <UnstyledButton component="a" href="/" className="leading-8">
+          <UnstyledButton component="a" href="/news" className="leading-8">
             News
           </UnstyledButton>
         </Flex>
