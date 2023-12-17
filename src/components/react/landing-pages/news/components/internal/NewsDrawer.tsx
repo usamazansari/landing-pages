@@ -17,21 +17,23 @@ export function NewsDrawer({ opened, close }: { opened: boolean; close: () => vo
   const [filteredCategories, setFilteredCategories] = useState<string[]>([]);
   const [filterText, setFilterText] = useState<string>('');
 
-  const groupedCategories = useMemo(() => {
-    return [
-      ...filteredCategories
-        .reduce((acc, category) => {
-          acc.set(category.charAt(0).toLowerCase(), [
-            ...(acc.get(category.charAt(0).toLowerCase()) || []),
-            {
-              label: category.toUpperCase(),
-            },
-          ]);
-          return acc;
-        }, new Map<string, { label: string }[]>())
-        .entries(),
-    ].sort((a, b) => a[0].localeCompare(b[0]));
-  }, [filteredCategories]);
+  const groupedCategories = useMemo(
+    () =>
+      [
+        ...filteredCategories
+          .reduce((acc, category) => {
+            acc.set(category.charAt(0).toLowerCase(), [
+              ...(acc.get(category.charAt(0).toLowerCase()) || []),
+              {
+                label: category.toUpperCase(),
+              },
+            ]);
+            return acc;
+          }, new Map<string, { label: string }[]>())
+          .entries(),
+      ].sort((a, b) => a[0].localeCompare(b[0])),
+    [filteredCategories],
+  );
 
   useEffect(() => {
     setFilteredCategories(
