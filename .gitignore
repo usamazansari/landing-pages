@@ -25,3 +25,6 @@ pnpm-debug.log*
 
 # Nx Files
 .nx
+
+# Vercel
+.vercel
