@@ -30,7 +30,7 @@ export function News() {
 
   return (
     <ScrollArea h="100%">
-      <Flex direction="column" gap="lg" className="container mx-auto my-lg">
+      <Flex direction="column" gap="lg" className="container mx-auto my-lg" px="md">
         <Box>
           <Space />
           <Flex align="center" justify="space-between">
