@@ -1,12 +1,12 @@
 import { Anchor, Badge, Box, Card, Flex, Image, Spoiler, Text } from '@mantine/core';
-import { useWindowScroll } from '@mantine/hooks';
-import { setSelectedCategory, useAppDispatch } from 'src/components/react/landing-pages/news/store';
-import type { INews } from '../../types';
 import noNewsImage from '../../../../../../assets/news/no-news.webp';
+import type { INews } from '../../types';
+import { useGetAvailableNewsCategoriesQuery } from '../../store';
+import { useCallback } from 'react';
 
 export function NewsItem({ newsItem, largeArea = false }: { newsItem: INews; largeArea?: boolean }) {
-  const dispatch = useAppDispatch();
-  const [, scrollTo] = useWindowScroll();
+  const { data } = useGetAvailableNewsCategoriesQuery();
+  const isCategoryAvailable = useCallback((category: string) => data?.categories.includes(category), [data?.categories]);
 
   return (
     <Card className="h-full" withBorder>
@@ -30,13 +30,10 @@ export function NewsItem({ newsItem, largeArea = false }: { newsItem: INews; lar
             {newsItem.category.map(c => (
               <Badge
                 key={c}
-                variant="filled"
-                component="button"
-                onClick={() => {
-                  dispatch(setSelectedCategory(c));
-                  scrollTo({ y: 0 });
-                }}
-                style={{ cursor: 'pointer' }}>
+                variant={isCategoryAvailable(c) ? 'filled' : 'outline'}
+                component="a"
+                href={`/news/${c.toLowerCase().replace(/[\s_]/g, '-')}`}
+                style={{ pointerEvents: isCategoryAvailable(c) ? 'auto' : 'none', cursor: isCategoryAvailable(c) ? 'pointer' : 'default' }}>
                 {c.toUpperCase()}
               </Badge>
             ))}
