@@ -9,17 +9,17 @@ export function News() {
   const relatedPopularCategories = useAppSelector(state => state.news.relatedPopularCategories);
 
   const items = useMemo(() => {
-    const items = [] as { title: string; icon: string; href?: string }[];
+    const items = [] as { title: string; icon: string; href: string }[];
     items.push({ title: '', icon: 'home', href: '/' });
     items.push({ title: 'News', icon: '', href: '/news' });
     if (!category) return items;
-    items.push({ title: category.toUpperCase(), icon: '' });
+    items.push({ title: category.toUpperCase(), icon: '', href: `/news/${category.toLowerCase().replace(/[\s_]/g, '-')}` });
     return items;
   }, [category]);
 
   const breadCrumbItems = useMemo(() => {
     return items.map(item => (
-      <Anchor key={item.title.toLowerCase()} href={item?.href} underline="never">
+      <Anchor key={item.title.toLowerCase()} href={item.href} underline="never">
         <Flex align="center" gap="xs">
           {!item.icon ? null : <span className="material-icons">{item.icon}</span>}
           {!item.title ? null : <Text>{item.title}</Text>}
