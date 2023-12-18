@@ -22,7 +22,7 @@ export function NewsItem({ newsItem, largeArea = false }: { newsItem: INews; lar
             <Text c="dimmed" size="sm" className="leading-[normal] flex items-center">
               <span className="material-icons">today</span>
             </Text>
-            <Text c="dimmed" size="sm" fs="italic" fw={500} className="leading-[normal] flex items-center">
+            <Text c="dimmed" size="sm" fs="italic" fw={500} className="leading-[normal] flex items-center whitespace-nowrap">
               {new Date(newsItem.published).toDateString()}
             </Text>
           </Flex>
