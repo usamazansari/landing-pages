@@ -1,17 +1,7 @@
 {
   "extends": "astro/tsconfigs/strict",
   "compilerOptions": {
-    "rootDir": ".",
-    "baseUrl": ".",
     "jsx": "react-jsx",
-    "jsxImportSource": "react",
-    "paths": {
-      "@landing-pages/react/common/components": ["src/components/react/common/components/index.ts"],
-      "@landing-pages/react/common/config": ["src/components/react/common/config/index.ts"],
-      "@landing-pages/react/common/hooks": ["src/components/react/common/hooks/index.ts"],
-      "@landing-pages/react/common/types": ["src/components/react/common/types/index.ts"]
-    }
-  },
-  "types": ["bun-types"]
+    "jsxImportSource": "react"
+  }
 }
-
