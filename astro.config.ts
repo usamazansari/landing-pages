@@ -11,16 +11,16 @@ export default defineConfig({
   integrations: [react(), tailwind(), markdoc(), mdx()],
   output: 'server',
   adapter: vercel({
-    edgeMiddleware: true,
-    speedInsights: {
-      enabled: true,
-    },
-    webAnalytics: {
-      enabled: true,
-    },
-    devImageService: 'squoosh',
-    functionPerRoute: true,
-    imageService: true,
+    // edgeMiddleware: true,
+    // speedInsights: {
+    //   enabled: true,
+    // },
+    // webAnalytics: {
+    //   enabled: true,
+    // },
+    // devImageService: 'squoosh',
+    // functionPerRoute: true,
+    // imageService: true,
   }),
 });
 
