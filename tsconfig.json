@@ -11,6 +11,6 @@
       "@landing-pages/react/common/hooks": ["src/components/react/common/hooks/index.ts"],
       "@landing-pages/react/common/types": ["src/components/react/common/types/index.ts"]
     }
-  },
-  "types": ["bun-types"]
+  }
 }
+
