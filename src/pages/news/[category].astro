@@ -3,7 +3,7 @@ import Layout from '../../Layout/Layout.astro';
 import { NewsApp } from '../../components/react/landing-pages/news';
 
 const { category } = Astro.params;
-const apiKey = import.meta.env.NEWS_API_KEY;
+const apiKey = Bun.env.NEWS_API_KEY as string;
 ---
 
 <Layout>
