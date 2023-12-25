@@ -14,7 +14,7 @@ export function PageWithAffix({ nav, main, footer }: { nav: React.ReactNode; mai
         <Transition transition="slide-up" mounted={scroll.y > 0}>
           {transitionStyles => (
             <ActionIcon size="xl" variant="filled" radius="xl" onClick={() => scrollTo({ y: 0 })} style={transitionStyles}>
-              <span className="material-icons">expand_less</span>
+              <span className="material-symbols-outlined">expand_less</span>
             </ActionIcon>
           )}
         </Transition>

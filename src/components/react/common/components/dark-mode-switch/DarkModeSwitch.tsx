@@ -12,8 +12,8 @@ export function DarkModeSwitch(): React.ReactNode {
   return !isHydrated ? null : (
     <Switch
       size="lg"
-      onLabel={<span className="text-sm material-icons">light_mode</span>}
-      offLabel={<span className="text-sm material-icons">dark_mode</span>}
+      onLabel={<span className="text-sm material-symbols-outlined">light_mode</span>}
+      offLabel={<span className="text-sm material-symbols-outlined">dark_mode</span>}
       defaultChecked={colorScheme === 'light'}
       onChange={() => {
         toggleColorScheme();
@@ -21,4 +21,3 @@ export function DarkModeSwitch(): React.ReactNode {
     />
   );
 }
-

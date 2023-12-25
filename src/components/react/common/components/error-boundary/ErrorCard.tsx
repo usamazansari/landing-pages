@@ -22,7 +22,7 @@ export function ErrorCard({ error }: { error?: FetchBaseQueryError | SerializedE
     <Card withBorder>
       <Card.Section withBorder>
         <Box className="flex items-center justify-center p-4" c="red">
-          <span className="material-icons text-7xl">error</span>
+          <span className="material-symbols-outlined text-7xl">error</span>
         </Box>
       </Card.Section>
       <Card.Section withBorder>

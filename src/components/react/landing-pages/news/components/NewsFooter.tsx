@@ -17,7 +17,7 @@ export function NewsFooter() {
               Powered by
             </Text>
             <Anchor href="https://currentsapi.services/en" target="_blank" underline="hover" className="underline-offset-2">
-              Currents API <span className="material-icons text-[1rem]">open_in_new</span>
+              Currents API <span className="material-symbols-outlined text-[1rem]">open_in_new</span>
             </Anchor>
           </Flex>
           <Flex direction="column" align="center">
@@ -25,7 +25,7 @@ export function NewsFooter() {
               Layout inspired by
             </Text>
             <Anchor href="https://www.bbc.com/news" target="_blank" underline="hover" className="underline-offset-2">
-              BBC News <span className="material-icons text-[1rem]">open_in_new</span>
+              BBC News <span className="material-symbols-outlined text-[1rem]">open_in_new</span>
             </Anchor>
           </Flex>
         </Flex>
