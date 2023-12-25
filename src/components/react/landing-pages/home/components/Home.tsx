@@ -10,7 +10,7 @@ export function Home() {
   return (
     <>
       <ScrollArea h="100%">
-        <Flex direction="column" gap="lg" className="container mx-auto my-lg">
+        <Flex direction="column" gap="lg" className="container mx-auto my-lg" px="md">
           <Title order={4}>The Many Facets of the Web</Title>
           <Box className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-xl">
             {cards.map(card => (
