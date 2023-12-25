@@ -6,7 +6,7 @@ export function NewsSection({ name = '', children }: { name: string; children: R
       <Divider
         label={
           <Text size="lg" fw="bold">
-            {!name.length ? 'Latest News' : name.toLowerCase().replace(/./i, $ => $.toUpperCase())}
+            {!name.length ? 'LATEST NEWS' : name.toUpperCase()}
           </Text>
         }
         labelPosition="left"
