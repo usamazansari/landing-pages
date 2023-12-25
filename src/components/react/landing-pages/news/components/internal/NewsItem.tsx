@@ -19,10 +19,10 @@ export function NewsItem({ newsItem, largeArea = false }: { newsItem: INews; lar
         </Anchor>
         <Flex align="center" justify="space-between" gap="xs">
           <Flex align="center" gap="xs">
-            <Text c="dimmed" size="sm" className="leading-[normal] flex items-center">
-              <span className="material-icons">today</span>
+            <Text c="dimmed" size="sm" className="flex items-center" style={{ lineHeight: 'normal' }}>
+              <span className="material-symbols-outlined">today</span>
             </Text>
-            <Text c="dimmed" size="sm" fs="italic" fw={500} className="leading-[normal] flex items-center whitespace-nowrap">
+            <Text c="dimmed" size="sm" fs="italic" fw={500} className="flex items-center whitespace-nowrap" style={{ lineHeight: 'normal' }}>
               {new Date(newsItem.published).toDateString()}
             </Text>
           </Flex>

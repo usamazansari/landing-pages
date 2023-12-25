@@ -50,8 +50,12 @@ export function NewsDrawer({ opened, close }: { opened: boolean; close: () => vo
             <Flex align="center" gap="md" className="pr-xs">
               <Drawer.Title className="cursor-default">
                 <Flex align="center" gap="xs" p="md">
-                  <span className="material-icons">category</span>
-                  <Text fw={500}>Categories</Text>
+                  <Text className="grid place-content-center" style={{ lineHeight: 'normal' }}>
+                    <span className="material-symbols-outlined">category</span>
+                  </Text>
+                  <Text fw={500} style={{ lineHeight: 'normal' }}>
+                    Categories
+                  </Text>
                 </Flex>
               </Drawer.Title>
               <Drawer.CloseButton />
@@ -59,7 +63,7 @@ export function NewsDrawer({ opened, close }: { opened: boolean; close: () => vo
             <Box className="px-md pb-md">
               <TextInput
                 value={filterText}
-                rightSection={!filterText ? <span className="material-icons">search</span> : <CloseButton onClick={() => setFilterText('')} />}
+                rightSection={!filterText ? <span className="material-symbols-outlined">search</span> : <CloseButton onClick={() => setFilterText('')} />}
                 onChange={e => {
                   setFilterText(e.currentTarget.value);
                 }}
@@ -128,24 +132,30 @@ export function NewsDrawer({ opened, close }: { opened: boolean; close: () => vo
             <Divider />
             {isLoading ? (
               <Flex align="center" gap="xs" p="md" justify="flex-end">
-                <span className="material-icons animate-spin">autorenew</span>
-                <Text c="dimmed">Fetching categories</Text>
+                <Text className="grid place-content-center" style={{ lineHeight: 'normal' }}>
+                  <span className="material-symbols-outlined animate-spin">autorenew</span>
+                </Text>
+                <Text c="dimmed" style={{ lineHeight: 'normal' }}>
+                  Fetching categories
+                </Text>
               </Flex>
             ) : null}
             {isSuccess ? (
               <Flex align="center" gap="xs" p="md" justify="flex-end">
-                <span className="material-icons">info</span>
-                <Text c="dimmed">
+                <Text className="grid place-content-center" style={{ lineHeight: 'normal' }}>
+                  <span className="material-symbols-outlined">info</span>
+                </Text>
+                <Text c="dimmed" style={{ lineHeight: 'normal' }}>
                   {filteredCategories.length} {`${filteredCategories.length === 1 ? 'category' : 'categories'}`} available
                 </Text>
               </Flex>
             ) : null}
             {isError ? (
               <Flex align="center" gap="xs" p="md" justify="flex-end">
-                <Text className="grid place-content-center leading-[normal]" c="red">
-                  <span className="material-icons">warning</span>
+                <Text className="grid place-content-center" style={{ lineHeight: 'normal' }} c="red">
+                  <span className="material-symbols-outlined">warning</span>
                 </Text>
-                <Text className="leading-[normal]" c="red">
+                <Text c="red" style={{ lineHeight: 'normal' }}>
                   Unable to fetch categories
                 </Text>
               </Flex>

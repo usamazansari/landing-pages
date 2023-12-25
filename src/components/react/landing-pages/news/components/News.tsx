@@ -10,7 +10,7 @@ export function News() {
 
   const items = useMemo(() => {
     const items = [] as { title: string; icon: string; href: string }[];
-    items.push({ title: '', icon: 'home', href: '/' });
+    items.push({ title: '', icon: 'house', href: '/' });
     items.push({ title: 'News', icon: '', href: '/news' });
     if (!category) return items;
     items.push({ title: category.toUpperCase(), icon: '', href: `/news/${category.toLowerCase().replace(/[\s_]/g, '-')}` });
@@ -21,8 +21,12 @@ export function News() {
     return items.map(item => (
       <Anchor key={item.title.toLowerCase()} href={item.href} underline="never">
         <Flex align="center" gap="xs">
-          {!item.icon ? null : <span className="material-icons">{item.icon}</span>}
-          {!item.title ? null : <Text>{item.title}</Text>}
+          {!item.icon ? null : (
+            <Text className="grid place-content-center" style={{ lineHeight: 'normal' }}>
+              <span className="material-symbols-outlined">{item.icon}</span>
+            </Text>
+          )}
+          {!item.title ? null : <Text style={{ lineHeight: 'normal' }}>{item.title}</Text>}
         </Flex>
       </Anchor>
     ));
@@ -43,7 +47,7 @@ export function News() {
                 }}>
                 <Flex align="center" gap="sm">
                   <Text className="leading-[normal] flex items-center">
-                    <span className="material-icons">refresh</span>
+                    <span className="material-symbols-outlined">refresh</span>
                   </Text>
                   <Text fw={500} className="leading-[normal] flex items-center">
                     Refresh

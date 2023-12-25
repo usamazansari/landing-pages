@@ -17,8 +17,12 @@ export function NewsCarousel({ newsItemList = [] }: { newsItemList: INews[] }) {
       {!newsItemList.length ? (
         <Box className="grid place-content-center h-full w-full">
           <Flex align="center">
-            <span className="material-icons">error</span>
-            <Text c="dimmed">No news available</Text>
+            <Text className="grid place-content-center" style={{ lineHeight: 'normal' }}>
+              <span className="material-symbols-outlined">error</span>
+            </Text>
+            <Text c="dimmed" style={{ lineHeight: 'normal' }}>
+              No news available
+            </Text>
           </Flex>
         </Box>
       ) : (

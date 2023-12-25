@@ -1,4 +1,4 @@
-import { Badge, Button, Card, Flex, Image, Text } from '@mantine/core';
+import { Badge, Button, Card, Flex, Image, Spoiler, Text } from '@mantine/core';
 import type { IHomeCard } from '../types';
 
 export function HomeCard({ card }: { card: IHomeCard }) {
@@ -13,9 +13,9 @@ export function HomeCard({ card }: { card: IHomeCard }) {
           <Flex align="center" justify="space-between">
             <Flex align="center" gap="xs">
               <Text className="leading-[normal] flex items-center">
-                <span className="material-icons">{card.icon}</span>
+                <span className="material-symbols-outlined">{card.icon}</span>
               </Text>
-              <Text fw={500} className="leading-[normal] flex items-center">
+              <Text fw={500} style={{ lineHeight: 'normal' }}>
                 {card.label}
               </Text>
             </Flex>
@@ -23,15 +23,15 @@ export function HomeCard({ card }: { card: IHomeCard }) {
               {card.activeUsers.toFixed()} ONLINE
             </Badge>
           </Flex>
-          <Text c="dimmed" size="sm" lineClamp={2}>
+          <Spoiler hideLabel="Show less" showLabel="Show more" maxHeight={42} c="dimmed">
             {card.description}
-          </Text>
+          </Spoiler>
           <Button
             variant="light"
             component="a"
             href={card.href}
             className="self-end justify-self-end"
-            rightSection={<span className="material-icons">chevron_right</span>}>
+            rightSection={<span className="material-symbols-outlined">chevron_right</span>}>
             Explore {card.label}
           </Button>
         </Flex>
