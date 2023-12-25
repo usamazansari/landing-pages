@@ -1,8 +1,10 @@
 ---
 import Layout from '../Layout/Layout.astro';
+import Head from '../components/astro/landing-pages/home/Head.astro';
 import { HomeApp } from '../components/react/landing-pages/home';
 ---
 
 <Layout>
+  <Head slot="head" />
   <HomeApp client:load />
 </Layout>
