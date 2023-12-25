@@ -30,6 +30,7 @@ module.exports = {
   rules: {
     '@typescript-eslint/no-unused-vars': 'warn',
     'no-unused-vars': 'warn',
+    'no-template-curly-in-string': 'warn',
     'object-shorthand': 'warn',
     'prettier/prettier': 'warn',
     'react-hooks/exhaustive-deps': 'warn',
