@@ -1,0 +1,61 @@
+name: Feature Request
+description: Template for feature requests
+title: '[FEATURE]: '
+labels:
+  - 'type: feature'
+assignees:
+  - usamazansari
+body:
+  - type: textarea
+    id: feature-description
+    attributes:
+      label: Feature Description
+      description: Please provide a detailed description of the new feature or enhancement you are requesting.
+      placeholder: Describe the feature here.
+    validations:
+      required: true
+  - type: textarea
+    id: feature-rationale
+    attributes:
+      label: Rationale
+      description: Explain why you believe this feature would be valuable or necessary.
+      placeholder: Explain your rationale here.
+    validations:
+      required: true
+  - type: textarea
+    id: feature-use-case
+    attributes:
+      label: Use Case
+      description: Provide one or more use cases that illustrate how this feature would be used.
+      placeholder: Describe a typical use case here.
+    validations:
+      required: true
+  - type: textarea
+    id: feature-benefits
+    attributes:
+      label: Benefits
+      description: Describe the benefits or advantages of implementing this feature.
+      placeholder: Explain the advantages here.
+  - type: textarea
+    id: feature-implementation
+    attributes:
+      label: Implementation Ideas
+      description: If you have any ideas or suggestions on how this feature could be implemented, please share them.
+      placeholder: Share your implementation ideas here.
+  - type: checkboxes
+    id: feature-checklist
+    attributes:
+      label: Checklist
+      description: Please check the boxes below to submit the feature request.
+      options:
+        - label: I have reviewed existing features and confirmed that this is not a duplicate request.
+          required: true
+        - label: This feature is aligned with the project's goals and objectives.
+          required: false
+        - label: I am willing to provide additional information or collaborate on the implementation if needed.
+          required: true
+  - type: markdown
+    attributes:
+      value: >-
+        This template was generated with [Issue Forms Creator](https://issue-forms-creator.netlify.app)
+
