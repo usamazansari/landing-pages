@@ -10,6 +10,14 @@ export const HomeCardList: IHomeCard[] = [
     image: 'https://cdn.pixabay.com/photo/2014/05/21/22/28/old-newspaper-350376_1280.jpg',
   },
   {
+    description: 'Check current weather conditions, forecasts, and related information for your location or any place of interest.',
+    icon: 'cloud',
+    label: 'Weather',
+    href: '/weather',
+    activeUsers: 0,
+    image: 'https://cdn.pixabay.com/photo/2015/09/23/08/16/thunder-953118_1280.jpg',
+  },
+  {
     description:
       'Access your financial accounts, manage transactions, and explore banking services securely from the convenience of your computer or mobile device.',
     icon: 'account_balance',
@@ -57,14 +65,6 @@ export const HomeCardList: IHomeCard[] = [
     href: '/travel',
     activeUsers: 0,
     image: 'https://cdn.pixabay.com/photo/2017/06/05/11/01/airport-2373727_1280.jpg',
-  },
-  {
-    description: 'Check current weather conditions, forecasts, and related information for your location or any place of interest.',
-    icon: 'cloud',
-    label: 'Weather',
-    href: '/weather',
-    activeUsers: 0,
-    image: 'https://cdn.pixabay.com/photo/2015/09/23/08/16/thunder-953118_1280.jpg',
   },
   {
     description: 'Upload, view, and share videos on a platform that connects people through multimedia content.',

@@ -1,0 +1,12 @@
+---
+import Layout from '../../Layout/Layout.astro';
+import Head from '../../components/astro/landing-pages/weather/Head.astro';
+import { WeatherApp } from '../../components/react/landing-pages/weather';
+
+const apiKey = import.meta.env.WEATHER_API_KEY;
+---
+
+<Layout>
+  <Head slot="head" />
+  <WeatherApp apiKey={apiKey} client:load />
+</Layout>
