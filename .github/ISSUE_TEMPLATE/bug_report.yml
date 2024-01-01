@@ -1,0 +1,72 @@
+name: Bug report
+description: Template for bug reports
+title: '[BUG]: '
+labels:
+  - 'type: bug'
+assignees:
+  - usamazansari
+body:
+  - type: input
+    id: bug-release
+    attributes:
+      label: Release
+      description: >-
+        Please enter the release version or the branch in which this bug is
+        reported.
+      placeholder: v{major}.{minor}.{patch}
+    validations:
+      required: true
+  - type: textarea
+    id: bug-reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Please describe the steps to reproduce the bug.
+      placeholder: Please fill in the steps to reproduce the bug in this textarea
+      value: |-
+        1. Navigate to ...
+        2. Click on ...
+        3. ...
+    validations:
+      required: true
+  - type: textarea
+    id: bug-observed-behavior
+    attributes:
+      label: Observed Behavior
+      description: Please describe the behavior observed due to this bug.
+      value: '- Upon clicking ..., ... fails'
+    validations:
+      required: true
+  - type: markdown
+    attributes:
+      value: >-
+        Please attach screenshots, screencasts or error logs in the
+        #bug-observed-behavior for better debugging
+  - type: textarea
+    id: bug-expected-behavior
+    attributes:
+      label: Expected Behavior
+      description: >-
+        Please describe the correct behavior that would have happened if this
+        bug did not arise.
+      value: '- ... should not fail'
+    validations:
+      required: true
+  - type: checkboxes
+    id: bug-checklist
+    attributes:
+      label: Checklist
+      description: Please check the below boxes to submit the bug report.
+      options:
+        - label: The bug is reproducible in the specified environment
+          required: true
+        - label: Screenshots / screencasts / error logs are added
+          required: true
+        - label: The bug is of high severity
+          required: false
+        - label: There is a work around possible
+          required: false
+  - type: markdown
+    attributes:
+      value: >-
+        This template was generated with [Issue Forms Creator](https://issue-forms-creator.netlify.app)
+
