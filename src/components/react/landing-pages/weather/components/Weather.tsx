@@ -1,8 +1,7 @@
-import { Anchor, Box, Breadcrumbs, Button, Card, Flex, ScrollArea, Space, Text } from '@mantine/core';
-import { useMemo } from 'react';
-// import { setShouldRefetch, useAppDispatch, useAppSelector } from '../store';
+import { Anchor, Autocomplete, Box, Breadcrumbs, Button, Card, Flex, ScrollArea, Space, Text } from '@mantine/core';
+import { useEffect, useMemo, useState } from 'react';
 
-export function Weather() {
+export function Weather({ apiKey }: { apiKey: string }) {
   //   const dispatch = useAppDispatch();
 
   const items = useMemo(() => {
@@ -26,6 +25,20 @@ export function Weather() {
       </Anchor>
     ));
   }, [items]);
+
+  // TODO: @jitu712: Move this code into a search component
+
+  const { data, isSuccess, isError, error, isLoading } = useGetCurrentForecastQuery({ apiKey });
+  const [searchString, setSearchString] = useState('');
+  const [searchResults, setSearchResults] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (isLoading) setSearchResults([]);
+    if (isSuccess) setSearchResults(data.map(() => ({ name: '', lat: 0, log: 0 })));
+    if (isError) setSearchResults([]);
+  }, [data, isError, isLoading, isSuccess]);
+
+  // TODO: @jitu712: END: Move this code into a search component
 
   return (
     <ScrollArea h="100%">
@@ -57,7 +70,9 @@ export function Weather() {
             <Text ta="center">Advertisement</Text>
           </Card>
         </Box>
-        <Box></Box>
+        <Box>
+          <Autocomplete data={searchResults} value={searchString} onChange={setSearchString} />;
+        </Box>
       </Flex>
     </ScrollArea>
   );

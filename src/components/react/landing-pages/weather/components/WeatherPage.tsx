@@ -6,17 +6,16 @@ import { Weather } from './Weather';
 import { WeatherFooter } from './WeatherFooter';
 
 export function WeatherPage({ apiKey, selectedCategory }: { apiKey: string; selectedCategory?: string }) {
-//   const dispatch = useAppDispatch();
+  //   const dispatch = useAppDispatch();
 
-//   useEffect(() => {
-//     dispatch(setAPIKey(apiKey));
-//   }, [apiKey, dispatch]);
+  //   useEffect(() => {
+  //     dispatch(setAPIKey(apiKey));
+  //   }, [apiKey, dispatch]);
 
-//   useEffect(() => {
-//     if (!selectedCategory) return;
-//     dispatch(setSelectedCategory(selectedCategory.toLowerCase().replace(/[\s_]/g, '-')));
-//   }, [dispatch, selectedCategory]);
+  //   useEffect(() => {
+  //     if (!selectedCategory) return;
+  //     dispatch(setSelectedCategory(selectedCategory.toLowerCase().replace(/[\s_]/g, '-')));
+  //   }, [dispatch, selectedCategory]);
 
-  return <PageWithAffix nav={<WeatherHeader />} main={<Weather />} footer={<WeatherFooter
- />} />;
+  return <PageWithAffix nav={<WeatherHeader />} main={<Weather apiKey={apiKey} />} footer={<WeatherFooter />} />;
 }
