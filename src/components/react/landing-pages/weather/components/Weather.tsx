@@ -1,5 +1,6 @@
 import { Anchor, Autocomplete, Box, Breadcrumbs, Button, Card, Flex, ScrollArea, Space, Text } from '@mantine/core';
 import { useEffect, useMemo, useState } from 'react';
+import { useGetCurrentForecastQuery } from '../store/weather.api';
 
 export function Weather({ apiKey }: { apiKey: string }) {
   //   const dispatch = useAppDispatch();
