@@ -1,4 +1,4 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query';
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import type { Forecast, Location } from '../types';
 
 export const weatherApi = createApi({
@@ -13,4 +13,4 @@ export const weatherApi = createApi({
   }),
 });
 
-export const { useGetCurrentForecast, useGetCityCoordinates } = weatherApi;
+export const { useGetCityCoordinatesQuery, useLazyGetCityCoordinatesQuery, useGetCurrentForecastQuery, useLazyGetCurrentForecastQuery } = weatherApi;

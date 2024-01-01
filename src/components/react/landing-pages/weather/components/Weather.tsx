@@ -1,9 +1,11 @@
 import { Anchor, Autocomplete, Box, Breadcrumbs, Button, Card, Flex, ScrollArea, Space, Text } from '@mantine/core';
 import { useEffect, useMemo, useState } from 'react';
-import { useGetCurrentForecastQuery } from '../store/weather.api';
+import { useLazyGetCityCoordinatesQuery } from '../store/weather.api';
+import { useAppDispatch, useAppSelector } from '../store';
 
-export function Weather({ apiKey }: { apiKey: string }) {
-  //   const dispatch = useAppDispatch();
+export function Weather() {
+  const dispatch = useAppDispatch();
+  const apiKey = useAppSelector(state => state.weather.apiKey);
 
   const items = useMemo(() => {
     const items = [] as { title: string; icon: string; href: string }[];
@@ -29,15 +31,19 @@ export function Weather({ apiKey }: { apiKey: string }) {
 
   // TODO: @jitu712: Move this code into a search component
 
-  const { data, isSuccess, isError, error, isLoading } = useGetCurrentForecastQuery({ apiKey });
+  const [trigger, { data, isLoading, isSuccess, isError }] = useLazyGetCityCoordinatesQuery();
   const [searchString, setSearchString] = useState('');
   const [searchResults, setSearchResults] = useState<string[]>([]);
 
   useEffect(() => {
-    if (isLoading) setSearchResults([]);
-    if (isSuccess) setSearchResults(data.map(() => ({ name: '', lat: 0, log: 0 })));
-    if (isError) setSearchResults([]);
-  }, [data, isError, isLoading, isSuccess]);
+    const fetchData = async () => {
+      await trigger({ apiKey, city: searchString }).unwrap();
+      if (isLoading) setSearchResults([]);
+      // if (isSuccess) setSearchResults(data?.map(() => ({ name: '', lat: 0, log: 0 })));
+      if (isError) setSearchResults([]);
+    };
+    fetchData();
+  }, [apiKey, data, isError, isLoading, isSuccess, searchString, trigger]);
 
   // TODO: @jitu712: END: Move this code into a search component
 
@@ -72,7 +78,7 @@ export function Weather({ apiKey }: { apiKey: string }) {
           </Card>
         </Box>
         <Box>
-          <Autocomplete data={searchResults} value={searchString} onChange={setSearchString} />;
+          <Autocomplete data={searchResults} value={searchString} onChange={setSearchString} />
         </Box>
       </Flex>
     </ScrollArea>
