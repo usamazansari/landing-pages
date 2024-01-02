@@ -22,7 +22,9 @@ export function SearchCity() {
 
   const options = searchResults.map(item => (
     <Combobox.Option value={item.value as string} key={item.value as string}>
-      {item.name}
+      <Text ta="left" size="sm">
+        {item.name}
+      </Text>
     </Combobox.Option>
   ));
 
@@ -62,9 +64,12 @@ export function SearchCity() {
       }}>
       <Combobox.DropdownTarget>
         <InputBase
+          placeholder="Enter at least three characters to search"
           value={searchString}
           rightSection={isLoading ? <Loader size={18} /> : <Combobox.Chevron />}
-          onClick={() => combobox.toggleDropdown()}
+          onClick={() => {
+            combobox.openDropdown();
+          }}
           onChange={e => {
             setSearchString(e.target.value);
           }}
@@ -78,18 +83,10 @@ export function SearchCity() {
               <Combobox.Empty>
                 <Flex align="center" justify="center" gap="xs">
                   <Loader size={18} />
-                  <Text>Loading...</Text>
+                  <Text size="sm">Loading...</Text>
                 </Flex>
               </Combobox.Empty>
             </Combobox.Options>
-          ) : isSuccess ? (
-            !data?.length ? (
-              <Combobox.Options>
-                <Combobox.Empty>No results found.</Combobox.Empty>
-              </Combobox.Options>
-            ) : (
-              options
-            )
           ) : isError ? (
             <Combobox.Options>
               <Combobox.Empty>
@@ -98,7 +95,27 @@ export function SearchCity() {
                 </Text>
               </Combobox.Empty>
             </Combobox.Options>
-          ) : null}
+          ) : isSuccess ? (
+            !data?.length ? (
+              <Combobox.Options>
+                <Combobox.Empty>
+                  <Text ta="left" size="sm">
+                    No results found.
+                  </Text>
+                </Combobox.Empty>
+              </Combobox.Options>
+            ) : (
+              options
+            )
+          ) : (
+            <Combobox.Options>
+              <Combobox.Empty>
+                <Text ta="left" size="sm">
+                  Search for a city name to show the results.
+                </Text>
+              </Combobox.Empty>
+            </Combobox.Options>
+          )}
         </Combobox.Options>
       </Combobox.Dropdown>
     </Combobox>
