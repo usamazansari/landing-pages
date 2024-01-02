@@ -4,6 +4,7 @@ import { weatherReducers } from './weather.reducer';
 
 const initialState: IWeatherState = {
   apiKey: '',
+  selectedCity: null,
 };
 
 const weatherSlice = createSlice({
@@ -14,5 +15,5 @@ const weatherSlice = createSlice({
   },
 });
 
-export const { setAPIKey } = weatherSlice.actions;
+export const { setAPIKey, setSelectedCity } = weatherSlice.actions;
 export const weatherReducer = weatherSlice.reducer;
