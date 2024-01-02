@@ -4,4 +4,6 @@ export interface Location {
   lon: number;
   country: string;
   state: string;
+  local_names: Record<string, string>;
+  value?: string;
 }

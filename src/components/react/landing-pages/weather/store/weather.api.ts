@@ -7,10 +7,11 @@ export const weatherApi = createApi({
     getCurrentForecast: builder.query<Forecast, { apiKey: string; lat: number; lon: number }>({
       query: ({ apiKey, lat, lon }) => `?lat=${lat}&lon=${lon}&appid=${apiKey}`,
     }),
-    getCityCoordinates: builder.query<Location, { apiKey: string; city: string }>({
+    searchCity: builder.query<Location[], { apiKey: string; city: string }>({
       query: ({ apiKey, city }) => `?q=${city}&appid=${apiKey}`,
+      transformResponse: (response: Location[]) => response.map(r => ({ ...r, value: r.name.toLowerCase().replace(/\s/g, '-') })),
     }),
   }),
 });
 
-export const { useGetCityCoordinatesQuery, useLazyGetCityCoordinatesQuery, useGetCurrentForecastQuery, useLazyGetCurrentForecastQuery } = weatherApi;
+export const { useLazySearchCityQuery, useSearchCityQuery, useGetCurrentForecastQuery, useLazyGetCurrentForecastQuery } = weatherApi;

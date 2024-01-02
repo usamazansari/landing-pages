@@ -3,11 +3,11 @@ import type { SerializedError } from '@reduxjs/toolkit';
 import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { useMemo } from 'react';
 
-function isFetchBaseQueryError(error?: FetchBaseQueryError | SerializedError): error is FetchBaseQueryError {
+export function isFetchBaseQueryError(error?: FetchBaseQueryError | SerializedError): error is FetchBaseQueryError {
   return !!(error as FetchBaseQueryError)?.status;
 }
 
-function isSerializedError(error?: FetchBaseQueryError | SerializedError): error is SerializedError {
+export function isSerializedError(error?: FetchBaseQueryError | SerializedError): error is SerializedError {
   return !!(error as SerializedError)?.stack;
 }
 
