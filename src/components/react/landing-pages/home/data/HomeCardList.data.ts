@@ -10,13 +10,12 @@ export const HomeCardList: IHomeCard[] = [
     image: 'https://cdn.pixabay.com/photo/2014/05/21/22/28/old-newspaper-350376_1280.jpg',
   },
   {
-    description:
-      'Access your financial accounts, manage transactions, and explore banking services securely from the convenience of your computer or mobile device.',
-    icon: 'account_balance',
-    label: 'Bank',
-    href: '/bank',
+    description: 'Explore various ways to visualize big data sets',
+    icon: 'bar_chart',
+    label: 'Data visualization',
+    href: '/data-visualization',
     activeUsers: 0,
-    image: 'https://cdn.pixabay.com/photo/2015/09/15/15/53/bank-notes-941246_1280.jpg',
+    image: 'https://cdn.pixabay.com/photo/2016/11/27/21/42/stock-1863880_1280.jpg',
   },
   {
     description: 'Shop for a wide range of products and services online, browse through catalogs, and make purchases with ease.',
@@ -116,4 +115,3 @@ export const HomeCardList: IHomeCard[] = [
     image: 'https://cdn.pixabay.com/photo/2015/07/19/10/00/school-work-851328_1280.jpg',
   },
 ];
-
