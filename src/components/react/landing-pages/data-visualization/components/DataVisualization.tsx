@@ -1,7 +1,11 @@
 import { Anchor, Box, Breadcrumbs, Flex, ScrollArea, Space, Text } from '@mantine/core';
 import { useMemo } from 'react';
+import { PersonalExpenses } from '../data';
+import { useElementSize } from '@mantine/hooks';
+import { LineChart } from './internal';
 
 export function DataVisualization() {
+  const { ref: boxRef, width: boxWidth, height: boxHeight } = useElementSize();
   const items = useMemo(() => {
     const items = [] as { title: string; icon: string; href: string }[];
     items.push({ title: '', icon: 'house', href: '/' });
@@ -33,7 +37,10 @@ export function DataVisualization() {
             <Breadcrumbs>{breadCrumbItems}</Breadcrumbs>
           </Flex>
         </Box>
-        <Box></Box>
+        <Box ref={boxRef}>
+          {/* <LineChart data={PersonalExpenses} series={[{ name: 'amount', color: 'blue' }]} dataKey={'date'} /> */}
+          <LineChart data={PersonalExpenses} height={boxHeight} width={boxWidth} />
+        </Box>
       </Flex>
     </ScrollArea>
   );
