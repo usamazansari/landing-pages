@@ -1,4 +1,4 @@
-import { ActionIcon, Affix, Transition } from '@mantine/core';
+import { ActionIcon, Affix, ScrollArea, Transition } from '@mantine/core';
 import { useWindowScroll } from '@mantine/hooks';
 import React from 'react';
 
@@ -8,7 +8,11 @@ export function PageWithAffix({ nav, main, footer }: { nav: React.ReactNode; mai
   return (
     <>
       <nav className="sticky top-0 left-0 right-0 z-10">{nav}</nav>
-      <main>{main}</main>
+      <main>
+        <ScrollArea h="100%" scrollbars="y">
+          {main}
+        </ScrollArea>
+      </main>
       <footer>{footer}</footer>
       <Affix position={{ bottom: 20, right: 20 }}>
         <Transition transition="slide-up" mounted={scroll.y > 0}>
