@@ -1,7 +1,8 @@
-import { Anchor, Box, Breadcrumbs, Flex, Space, Text } from '@mantine/core';
+import { ScrollArea, Anchor, Box, Breadcrumbs, Flex, Space, Text } from '@mantine/core';
 import { useMemo } from 'react';
 import { PersonalExpenses } from '../data';
-import { SimpleLineChart } from './internal';
+import { SimpleBarChart, SimpleLineChart } from './internal';
+
 export function DataVisualization() {
   const items = useMemo(() => {
     const items = [] as { title: string; icon: string; href: string }[];
@@ -26,16 +27,19 @@ export function DataVisualization() {
   }, [items]);
 
   return (
-    <Flex direction="column" gap="lg" className="container mx-auto my-lg h-full" px="md">
-      <Box>
-        <Space />
-        <Flex align="center" justify="space-between">
-          <Breadcrumbs>{breadCrumbItems}</Breadcrumbs>
-        </Flex>
+    <ScrollArea h="100%">
+      <Box className="container grid gap-lg mx-auto my-lg min-h-full" px="md">
+        <Box>
+          <Space />
+          <Flex align="center" justify="space-between">
+            <Breadcrumbs>{breadCrumbItems}</Breadcrumbs>
+          </Flex>
+        </Box>
+        <Box className="h-full">
+          <SimpleLineChart data={PersonalExpenses} />
+          <SimpleBarChart data={PersonalExpenses} />
+        </Box>
       </Box>
-      <Box className="h-full">
-        <SimpleLineChart data={PersonalExpenses} />
-      </Box>
-    </Flex>
+    </ScrollArea>
   );
 }
