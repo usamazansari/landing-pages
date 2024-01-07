@@ -61,7 +61,7 @@ export function SimpleLineChart<DataType extends Record<string, string | number>
   }, [gy, yScale]);
 
   return (
-    <svg ref={svgRef} className="w-full h-full min-h-96 min-w-full">
+    <svg ref={svgRef} className="w-full h-full min-h-96 min-w-full max-h-[600px] max-w-[900px]">
       <g ref={gx} transform={`translate(0, ${height - boundaries.bottom})`} />
       <g ref={gy} transform={`translate(${boundaries.left}, 0)`} />
       <path fill="none" d={d} stroke={theme.colors.blue[5]} />
