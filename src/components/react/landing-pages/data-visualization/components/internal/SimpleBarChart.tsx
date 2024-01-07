@@ -1,3 +1,5 @@
+import { BarChart } from '@mantine/charts';
+import '@mantine/charts/styles.css';
 import { rgba, useMantineTheme } from '@mantine/core';
 import { useElementSize } from '@mantine/hooks';
 import { axisBottom, axisLeft, extent, rollup, scaleBand, scaleLinear, select, sum } from 'd3';
@@ -25,7 +27,7 @@ export function SimpleBarChart<DataType extends Record<string, string | number>>
         v => sum(v, d => Math.abs(+d.amount)),
         d => d.category,
       ),
-    [data],
+    [data, excludeKeyList],
   );
 
   const categoriesDomain = useMemo(() => [...aggregatedCategories.keys()] as string[], [aggregatedCategories]);
@@ -52,11 +54,20 @@ export function SimpleBarChart<DataType extends Record<string, string | number>>
       ([...aggregatedCategories.entries()] as [string, number][]).map(([category, amount]) => ({
         x: xScale(category),
         y: yScale(amount),
-        width: xScale.bandwidth() - 2,
+        width: xScale.bandwidth() - 8,
         height: height - boundaries.bottom - yScale(amount),
         identifier: category.toLowerCase().replace(/\s/g, '-').replace(/-+/g, '-'),
       })),
     [aggregatedCategories, boundaries.bottom, height, xScale, yScale],
+  );
+
+  const mantineBars = useMemo(
+    () =>
+      [...aggregatedCategories.entries()].map(([category, amount]) => ({
+        category,
+        amount,
+      })),
+    [aggregatedCategories],
   );
 
   useEffect(() => {
@@ -68,21 +79,24 @@ export function SimpleBarChart<DataType extends Record<string, string | number>>
   }, [gy, yScale]);
 
   return (
-    <svg ref={svgRef} className="w-full h-full min-h-96 min-w-full">
-      <g ref={gx} transform={`translate(0, ${height - boundaries.bottom})`} />
-      <g ref={gy} transform={`translate(${boundaries.left}, 0)`} />
-      {bars.map(({ x, y, width, height, identifier }) => (
-        <rect
-          key={identifier}
-          x={x}
-          y={y}
-          width={width}
-          height={height}
-          // fill={rgba(theme.colors.blue[5], 0.5)}
-          fill={theme.colors.blue[5]}
-          // stroke={theme.colors.blue[5]}
-        />
-      ))}
-    </svg>
+    <>
+      <svg ref={svgRef} className="w-full h-full min-h-96 min-w-full max-h-[600px] max-w-[900px]">
+        <g ref={gx} transform={`translate(0, ${height - boundaries.bottom})`} />
+        <g ref={gy} transform={`translate(${boundaries.left}, 0)`} />
+        {bars.map(({ x, y, width, height, identifier }) => (
+          <rect
+            key={identifier}
+            x={x}
+            y={y}
+            width={width}
+            height={height}
+            // fill={rgba(theme.colors.blue[6], 0.5)}
+            fill={theme.colors.blue[6]}
+            // stroke={theme.colors.blue[6]}
+          />
+        ))}
+      </svg>
+      <BarChart h={300} data={mantineBars} dataKey="category" series={[{ name: 'amount', color: 'blue.6' }]} tickLine="xy" tooltipAnimationDuration={200} />
+    </>
   );
 }
