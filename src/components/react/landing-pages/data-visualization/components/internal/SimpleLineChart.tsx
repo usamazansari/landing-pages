@@ -52,11 +52,16 @@ export function SimpleLineChart<DataType extends Record<string, string | number>
     return d;
   }, [data, lineDFn]);
 
-  useEffect(() => void select(gx.current).call(axisBottom(xScale) as (s: unknown) => void), [gx, xScale]);
-  useEffect(() => void select(gy.current).call(axisLeft(yScale) as (s: unknown) => void), [gy, yScale]);
+  useEffect(() => {
+    select(gx.current).call(axisBottom(xScale) as (s: unknown) => void);
+  }, [gx, xScale]);
+
+  useEffect(() => {
+    select(gy.current).call(axisLeft(yScale) as (s: unknown) => void);
+  }, [gy, yScale]);
 
   return (
-    <svg ref={svgRef} className="w-full h-full">
+    <svg ref={svgRef} className="w-full h-full min-h-96 min-w-full">
       <g ref={gx} transform={`translate(0, ${height - boundaries.bottom})`} />
       <g ref={gy} transform={`translate(${boundaries.left}, 0)`} />
       <path fill="none" d={d} stroke={theme.colors.blue[5]} />
