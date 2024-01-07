@@ -1,2 +1,3 @@
 export * from './DataVisualizationDrawer';
-export * from './LineChart';
+export * from './SimpleLineChart';
+export * from './SimpleBarChart';
