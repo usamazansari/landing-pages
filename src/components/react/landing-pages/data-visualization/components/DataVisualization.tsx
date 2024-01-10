@@ -27,7 +27,7 @@ export function DataVisualization() {
   }, [items]);
 
   return (
-    <Box className="container grid gap-lg mx-auto min-h-full" px="md" my="lg">
+    <Box className="container mx-auto grid gap-lg" px="md" my="lg">
       <Box>
         <Space />
         <Flex align="center" justify="space-between">
@@ -35,7 +35,7 @@ export function DataVisualization() {
         </Flex>
       </Box>
       <Box>
-        <SimpleLineChart data={PersonalExpenses} />
+        {/* <SimpleLineChart data={PersonalExpenses} /> */}
         <SimpleBarChart data={PersonalExpenses} excludeKeyList={['Salary', 'Laundry', 'Treasure']} />
       </Box>
     </Box>
