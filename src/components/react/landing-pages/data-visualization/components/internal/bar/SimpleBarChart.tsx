@@ -1,10 +1,11 @@
 import { BarChart } from '@mantine/charts';
 import '@mantine/charts/styles.css';
-import { Flex, Text, Tooltip, rgba, useMantineTheme } from '@mantine/core';
+import { Box, Flex, Text, Tooltip, rgba, useMantineTheme } from '@mantine/core';
 import { useElementSize, useMouse } from '@mantine/hooks';
 import { extent, rollup, scaleBand, scaleLinear, sum, type ScaleBand, type ScaleLinear } from 'd3';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { ChartBoundaries } from '../../../types';
+import { findDiscreteValuesUsingDivideAndConquer } from '../../../utils';
 
 const BAR_GAP = 4;
 
@@ -122,7 +123,7 @@ export function SimpleBarChart<DataType extends Record<string, string | number>>
   boundaries?: ChartBoundaries;
 }) {
   const { ref: svgRef, ...svgDimensions } = useElementSize();
-  const { ref: dataGroupRef, x, y } = useMouse();
+  const { ref: rectOverlayRef, x } = useMouse();
   const theme = useMantineTheme();
   const [hoveredRectIndex, setHoveredRectIndex] = useState<number | null>(null);
 
@@ -175,6 +176,8 @@ export function SimpleBarChart<DataType extends Record<string, string | number>>
     [categoryAmountAggregation, boundaries.bottom, svgDimensions.height, xScale, yScale],
   );
 
+  const barsX = useMemo(() => bars.map(({ x }) => x), [bars]);
+
   const mantineBars = useMemo(
     () =>
       [...categoryAmountAggregation.entries()].map(([category, amount]) => ({
@@ -184,18 +187,14 @@ export function SimpleBarChart<DataType extends Record<string, string | number>>
     [categoryAmountAggregation],
   );
 
-  // const findNearestFloorValue = useCallback(
-  //   (mouseX: number) => {
-  //     const mappedBars = bars.map(({ x }) => x);
-  //     const nearestValue = mappedBars.reduce((nearest, curr) => (Math.abs(curr - mouseX) < Math.abs(nearest - mouseX) ? curr : nearest), null);
-  //     return nearestValue;
-  //   },
-  //   [bars],
-  // );
+  const getAmountAtCategory = useCallback((category: string) => categoryAmountAggregation.get(category), [categoryAmountAggregation]);
 
-  // useEffect(() => {
-  //   setHoveredRectIndex(bars.findIndex(({ x }) => x === findNearestFloorValue(x)));
-  // }, [bars, findNearestFloorValue, x]);
+  useEffect(() => {
+    const [hoveredBarX] = findDiscreteValuesUsingDivideAndConquer(x, barsX);
+    const i = barsX.findIndex(bX => bX === hoveredBarX) ?? null;
+    console.log({ hoveredBarX, i });
+    setHoveredRectIndex(i);
+  }, [barsX, x]);
 
   return (
     <Flex direction="column" gap="lg">
@@ -204,24 +203,56 @@ export function SimpleBarChart<DataType extends Record<string, string | number>>
           <XAxis xScale={xScale} categories={categoriesDomain} svgDimensions={svgDimensions} boundaries={boundaries} />
           <YAxis yScale={yScale} amountDomain={amountDomain} svgDimensions={svgDimensions} boundaries={boundaries} />
         </g>
-        <g id="data-group" ref={dataGroupRef}>
+        <g id="data-group">
           {bars.map(({ x, y, width, height, identifier }) => (
             <rect key={identifier} x={x} y={y} width={width} height={height} fill={rgba(theme.colors.blue[6], 1)} />
           ))}
+          <rect
+            ref={rectOverlayRef}
+            x={boundaries.left}
+            y={boundaries.top}
+            width={svgDimensions.width - boundaries.left - boundaries.right}
+            height={svgDimensions.height - boundaries.top - boundaries.bottom}
+            fill="transparent"
+          />
         </g>
-        {/* <g id="tooltip-group">
+        <g id="tooltip-group">
           {hoveredRectIndex === null ? null : (
-            <rect
-              x={bars[hoveredRectIndex]?.x - 4}
-              y={boundaries.top}
-              width={bars[hoveredRectIndex]?.width + 8}
-              height={svgDimensions.height - boundaries.bottom - boundaries.top}
-              fill={rgba(theme.colors.gray[6], 0.1)}
-              stroke={theme.colors.gray[6]}
-              strokeDasharray="6 4"
-            />
+            <>
+              <rect
+                x={bars[hoveredRectIndex]?.x - 4}
+                y={boundaries.top}
+                width={bars[hoveredRectIndex]?.width + 8}
+                height={svgDimensions.height - boundaries.bottom - boundaries.top}
+                fill={rgba(theme.colors.gray[6], 0.1)}
+                stroke={theme.colors.gray[6]}
+                strokeDasharray="6 4"
+              />
+              <foreignObject
+                x={bars[hoveredRectIndex]?.x - 4}
+                y={boundaries.top}
+                width={bars[hoveredRectIndex]?.width + 8}
+                height={svgDimensions.height - boundaries.bottom - boundaries.top}>
+                <Tooltip
+                  label={
+                    <Box className="grid gap-0">
+                      <Flex gap="sm" align="center">
+                        <Text>Category</Text>
+                        <Text>{categoriesDomain[hoveredRectIndex]}</Text>
+                      </Flex>
+                      <Flex gap="sm" align="center">
+                        <Text>Amount</Text>
+                        <Text className="font-mono">{getAmountAtCategory(categoriesDomain[hoveredRectIndex])?.toFixed(2)}</Text>
+                      </Flex>
+                    </Box>
+                  }
+                  position="right-start">
+                  <Box className="w-full h-full"></Box>
+                </Tooltip>
+              </foreignObject>
+            </>
           )}
-        </g> */}
+        </g>
       </svg>
       <BarChart h={450} data={mantineBars} dataKey="category" series={[{ name: 'amount', color: 'blue.6' }]} tickLine="xy" tooltipAnimationDuration={200} />
     </Flex>
