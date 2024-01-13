@@ -1,20 +1,21 @@
 import { Text, Tooltip } from '@mantine/core';
 import { type ScaleBand } from 'd3';
-import { useMemo, useRef } from 'react';
+import { memo, useMemo, useRef } from 'react';
 import type { ChartBoundaries } from '../../../types';
 import { BAR_GAP } from './constants';
 
-function XAxisTextWithTooltip({ boundaries, value }: { value: string; boundaries: ChartBoundaries }) {
+function XAxisTextWithTooltipInstance({ boundaries, value }: { value: string; boundaries: ChartBoundaries }) {
   const ref = useRef<HTMLParagraphElement>(null);
-  const isOverflowing = useMemo(() => (ref.current?.scrollWidth ?? 0) > (ref.current?.clientWidth ?? 0), []);
   return (
-    <Tooltip label={value} position="top-start" hidden={!isOverflowing} withArrow>
+    <Tooltip label={value} position="top-start" hidden={!(ref.current && (ref.current.scrollWidth ?? 0) > (ref.current.clientWidth ?? 0))} withArrow>
       <Text size="xs" c="dimmed" w={boundaries.bottom} className="rotate-45 origin-top-left cursor-default" truncate="end" ref={ref}>
         {value}
       </Text>
     </Tooltip>
   );
 }
+
+const XAxisTextWithTooltip = memo(XAxisTextWithTooltipInstance);
 
 export function XAxis({
   xScale,
