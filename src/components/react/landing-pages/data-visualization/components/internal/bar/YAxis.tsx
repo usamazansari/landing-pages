@@ -41,25 +41,23 @@ export function YAxis({
         d={['M', BAR_GAP * -1, 0, 'L', BAR_GAP * -1, svgDimensions.height - boundaries.bottom].join(' ')}
         style={{ stroke: 'var(--mantine-color-dimmed)' }}
       />
-      {ticks.map(({ value, yOffset }, index) =>
-        value ? (
-          <g key={value}>
-            <line x1={-8} x2={0} y1={yOffset} y2={yOffset} style={{ stroke: 'var(--mantine-color-dimmed)' }} />
-            <line
-              x1={0}
-              x2={svgDimensions.width - boundaries.left - boundaries.right + BAR_GAP}
-              y1={yOffset}
-              y2={yOffset}
-              style={{ stroke: 'var(--mantine-color-dimmed)', strokeDasharray: index !== 0 ? '6 4' : 'unset' }}
-            />
-            <foreignObject x={boundaries.left * -1 - 16} y={yOffset - 8} className="overflow-visible">
-              <Text size="xs" c="dimmed" w={boundaries.left} ta="right" className="cursor-default">
-                {value}
-              </Text>
-            </foreignObject>
-          </g>
-        ) : null,
-      )}
+      {ticks.map(({ value, yOffset }, index) => (
+        <g key={value}>
+          <line x1={-12} x2={BAR_GAP * -1} y1={yOffset} y2={yOffset} style={{ stroke: 'var(--mantine-color-dimmed)' }} />
+          <line
+            x1={BAR_GAP * -1}
+            x2={svgDimensions.width - boundaries.left - boundaries.right + BAR_GAP}
+            y1={yOffset}
+            y2={yOffset}
+            style={{ stroke: 'var(--mantine-color-dimmed)', strokeDasharray: index !== 0 ? '6 4' : 'unset' }}
+          />
+          <foreignObject x={boundaries.left * -1 - 16} y={yOffset - 8} className="overflow-visible">
+            <Text size="xs" c="dimmed" w={boundaries.left} ta="right" className="cursor-default">
+              {value}
+            </Text>
+          </foreignObject>
+        </g>
+      ))}
     </g>
   );
 }
