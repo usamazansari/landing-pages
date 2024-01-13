@@ -3,26 +3,80 @@ import '@mantine/charts/styles.css';
 import { Box, Flex, HoverCard, Text, rgba, useMantineTheme } from '@mantine/core';
 import { useElementSize, useMouse } from '@mantine/hooks';
 import { extent, rollup, scaleBand, scaleLinear, sum } from 'd3';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { ChartBoundaries } from '../../../types';
 import { XAxis } from './XAxis';
 import { YAxis } from './YAxis';
 import { BAR_GAP } from './constants';
-import { findDiscreteValuesUsingDivideAndConquer } from './helpers';
+
+type BarRectProps = {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  identifier: string;
+};
+
+type BarDatum = {
+  category: string;
+  amount: number;
+};
+
+function DatumRect({ datum }: { datum: BarRectProps }) {
+  const theme = useMantineTheme();
+  return <rect key={datum.identifier} x={datum.x} y={datum.y} width={datum.width} height={datum.height} fill={rgba(theme.colors.blue[6], 1)} />;
+}
+
+function RectTooltip({
+  bar,
+  boundaries,
+  svgDimensions,
+}: {
+  bar: (BarRectProps & BarDatum) | null;
+  boundaries: ChartBoundaries;
+  svgDimensions: { width: number; height: number };
+}) {
+  const theme = useMantineTheme();
+  return bar === null ? null : (
+    <>
+      <rect
+        x={bar.x - BAR_GAP / 2}
+        y={boundaries.top}
+        width={bar.width + BAR_GAP}
+        height={svgDimensions.height - boundaries.bottom - boundaries.top}
+        fill={rgba(theme.colors.gray[1], 0.1)}
+        stroke="var(--mantine-color-dimmed)"
+        strokeDasharray="6 4"
+      />
+      <foreignObject x={bar.x - 4} y={boundaries.top} width={bar.width + 8} height={svgDimensions.height - boundaries.bottom - boundaries.top}>
+        <HoverCard position="right-start" shadow="sm" withArrow>
+          <HoverCard.Target>
+            <Box className="w-full h-full"></Box>
+          </HoverCard.Target>
+          <HoverCard.Dropdown>
+            <Flex align="center" gap="md">
+              <Text>{bar.category}</Text>
+              <Text className="font-mono">{bar.amount.toFixed(2)}</Text>
+            </Flex>
+          </HoverCard.Dropdown>
+        </HoverCard>
+      </foreignObject>
+    </>
+  );
+}
 
 export function SimpleBarChart<DataType extends Record<string, string | number>>({
   data,
   excludeKeyList = [],
-  boundaries = { left: 60, right: 20, top: 10, bottom: 100 },
+  boundaries = { left: 80, right: 20, top: 10, bottom: 70 },
 }: {
   data: DataType[];
   excludeKeyList?: string[];
   boundaries?: ChartBoundaries;
 }) {
   const { ref: svgRef, ...svgDimensions } = useElementSize();
-  const { ref: rectOverlayRef, x } = useMouse();
-  const theme = useMantineTheme();
-  const [hoveredRectIndex, setHoveredRectIndex] = useState<number | null>(null);
+  const { ref: overlayRef, x } = useMouse();
+  const [hoveredBar, setHoveredBar] = useState<(BarRectProps & BarDatum) | null>(null);
 
   const categoryAmountAggregation = useMemo(
     () =>
@@ -63,17 +117,20 @@ export function SimpleBarChart<DataType extends Record<string, string | number>>
     () =>
       !svgDimensions.height
         ? []
-        : ([...categoryAmountAggregation.entries()] as [string, number][]).map(([category, amount]) => ({
-            x: xScale(category) as number,
-            y: yScale(amount) as number,
-            width: xScale.bandwidth() - BAR_GAP,
-            height: svgDimensions.height - boundaries.bottom - yScale(amount),
-            identifier: category,
-          })),
+        : ([...categoryAmountAggregation.entries()] as [string, number][]).map(
+            ([category, amount]) =>
+              ({
+                x: xScale(category) as number,
+                y: yScale(amount) as number,
+                width: xScale.bandwidth() - BAR_GAP,
+                height: svgDimensions.height - boundaries.bottom - yScale(amount),
+                identifier: category,
+                category,
+                amount,
+              }) as BarRectProps & BarDatum,
+          ),
     [categoryAmountAggregation, boundaries.bottom, svgDimensions.height, xScale, yScale],
   );
-
-  const barsX = useMemo(() => bars.map(({ x }) => x), [bars]);
 
   const mantineBars = useMemo(
     () =>
@@ -84,14 +141,15 @@ export function SimpleBarChart<DataType extends Record<string, string | number>>
     [categoryAmountAggregation],
   );
 
-  const getAmountAtCategory = useCallback((category: string) => categoryAmountAggregation.get(category), [categoryAmountAggregation]);
-
   useEffect(() => {
-    const [hoveredBarX] = findDiscreteValuesUsingDivideAndConquer(x, barsX);
-    const i = barsX.findIndex(bX => bX === hoveredBarX) ?? null;
-    console.log({ hoveredBarX, i });
-    setHoveredRectIndex(i);
-  }, [barsX, x]);
+    if (bars.length !== 0) {
+      const barWidth = (svgDimensions.width - boundaries.left - boundaries.right) / bars.length;
+      const hoveredBarIndex = Math.floor(x / barWidth);
+      if (hoveredBarIndex >= 0 && hoveredBarIndex < bars.length) {
+        setHoveredBar(bars[hoveredBarIndex]);
+      }
+    }
+  }, [bars, boundaries.left, boundaries.right, svgDimensions.width, x]);
 
   return (
     <Flex direction="column" gap="lg">
@@ -101,11 +159,12 @@ export function SimpleBarChart<DataType extends Record<string, string | number>>
           <YAxis yScale={yScale} amountDomain={amountDomain} svgDimensions={svgDimensions} boundaries={boundaries} />
         </g>
         <g id="data-group">
-          {bars.map(({ x, y, width, height, identifier }) => (
-            <rect key={identifier} x={x} y={y} width={width} height={height} fill={rgba(theme.colors.blue[6], 1)} />
+          {bars.map(datum => (
+            <DatumRect key={datum.identifier} datum={datum} />
           ))}
           <rect
-            ref={rectOverlayRef}
+            ref={overlayRef}
+            id="overlay"
             x={boundaries.left}
             y={boundaries.top}
             width={svgDimensions.width - boundaries.left - boundaries.right}
@@ -114,39 +173,19 @@ export function SimpleBarChart<DataType extends Record<string, string | number>>
           />
         </g>
         <g id="tooltip-group">
-          {hoveredRectIndex === null ? null : (
-            <>
-              <rect
-                x={bars[hoveredRectIndex]?.x - 4}
-                y={boundaries.top}
-                width={bars[hoveredRectIndex]?.width + 8}
-                height={svgDimensions.height - boundaries.bottom - boundaries.top}
-                fill="transparent"
-                stroke="var(--mantine-color-dimmed)"
-                strokeDasharray="6 4"
-              />
-              <foreignObject
-                x={bars[hoveredRectIndex]?.x - 4}
-                y={boundaries.top}
-                width={bars[hoveredRectIndex]?.width + 8}
-                height={svgDimensions.height - boundaries.bottom - boundaries.top}>
-                <HoverCard position="right-start" shadow="sm">
-                  <HoverCard.Target>
-                    <Box className="w-full h-full"></Box>
-                  </HoverCard.Target>
-                  <HoverCard.Dropdown>
-                    <Flex align="center" gap="md">
-                      <Text>{categoriesDomain[hoveredRectIndex]}</Text>
-                      <Text className="font-mono">{getAmountAtCategory(categoriesDomain[hoveredRectIndex])?.toFixed(2)}</Text>
-                    </Flex>
-                  </HoverCard.Dropdown>
-                </HoverCard>
-              </foreignObject>
-            </>
-          )}
+          <RectTooltip bar={hoveredBar} boundaries={boundaries} svgDimensions={svgDimensions} />
         </g>
       </svg>
-      <BarChart h={450} data={mantineBars} dataKey="category" series={[{ name: 'amount', color: 'blue.6' }]} tickLine="xy" tooltipAnimationDuration={200} />
+      <BarChart
+        h={450}
+        data={mantineBars}
+        dataKey="category"
+        series={[{ name: 'amount', color: 'blue.6' }]}
+        tickLine="xy"
+        tooltipAnimationDuration={200}
+        withLegend
+        withTooltip
+      />
     </Flex>
   );
 }
