@@ -22,11 +22,13 @@ export function XAxis({
   categories,
   svgDimensions,
   boundaries,
+  axisLabel,
 }: {
   xScale: ScaleBand<string>;
   categories: string[];
   svgDimensions: { height: number; width: number };
   boundaries: ChartBoundaries;
+  axisLabel: string;
 }) {
   const ticks = useMemo(
     () =>
@@ -53,6 +55,14 @@ export function XAxis({
           </foreignObject>
         </g>
       ))}
+      <foreignObject
+        x={(svgDimensions.width - boundaries.left - boundaries.right) / 2}
+        y={boundaries.bottom - boundaries.top - 16}
+        className="overflow-visible">
+        <Text size="sm" c="dimmed" fw="bold">
+          {axisLabel}
+        </Text>
+      </foreignObject>
     </g>
   );
 }

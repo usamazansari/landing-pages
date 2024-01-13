@@ -6,12 +6,13 @@ import { BAR_GAP } from './constants';
 
 export function YAxis({
   yScale,
+  axisLabel,
   svgDimensions,
   boundaries,
 }: {
   yScale: ScaleLinear<number, number>;
+  axisLabel: string;
   svgDimensions: { height: number; width: number };
-  amountDomain: [number, number];
   boundaries: ChartBoundaries;
 }) {
   const yAxisPoints = useMemo(() => {
@@ -52,12 +53,17 @@ export function YAxis({
             style={{ stroke: 'var(--mantine-color-dimmed)', strokeDasharray: index !== 0 ? '6 4' : 'unset' }}
           />
           <foreignObject x={boundaries.left * -1 - 16} y={yOffset - 8} className="overflow-visible">
-            <Text size="sm" c="dimmed" w={boundaries.left} ta="right" className="cursor-default font-mono">
+            <Text size="xs" c="dimmed" w={boundaries.left} ta="right" fw="bold" className="cursor-default font-mono">
               {value}
             </Text>
           </foreignObject>
         </g>
       ))}
+      <foreignObject x={boundaries.left * -1 + 8} y={(svgDimensions.height - boundaries.bottom - boundaries.top) / 2} className="overflow-visible">
+        <Text className="-rotate-90 origin-center" size="sm" c="dimmed" fw="bold">
+          {axisLabel}
+        </Text>
+      </foreignObject>
     </g>
   );
 }

@@ -68,7 +68,7 @@ function RectTooltip({
 export function SimpleBarChart<DataType extends Record<string, string | number>>({
   data,
   excludeKeyList = [],
-  boundaries = { left: 80, right: 20, top: 10, bottom: 70 },
+  boundaries = { left: 100, right: 10, top: 10, bottom: 100 },
 }: {
   data: DataType[];
   excludeKeyList?: string[];
@@ -155,8 +155,8 @@ export function SimpleBarChart<DataType extends Record<string, string | number>>
     <Flex direction="column" gap="lg">
       <svg ref={svgRef} className="w-full min-h-[450px]">
         <g id="axes-group">
-          <XAxis xScale={xScale} categories={categoriesDomain} svgDimensions={svgDimensions} boundaries={boundaries} />
-          <YAxis yScale={yScale} amountDomain={amountDomain} svgDimensions={svgDimensions} boundaries={boundaries} />
+          <XAxis xScale={xScale} axisLabel={'Category'} categories={categoriesDomain} svgDimensions={svgDimensions} boundaries={boundaries} />
+          <YAxis yScale={yScale} axisLabel={'Amount'} svgDimensions={svgDimensions} boundaries={boundaries} />
         </g>
         <g id="data-group">
           {bars.map(datum => (
