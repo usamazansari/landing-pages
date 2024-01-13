@@ -1,0 +1,65 @@
+import { Text } from '@mantine/core';
+import { type ScaleLinear } from 'd3';
+import { useMemo } from 'react';
+import type { ChartBoundaries } from '../../../types';
+import { BAR_GAP } from './constants';
+
+export function YAxis({
+  yScale,
+  svgDimensions,
+  boundaries,
+}: {
+  yScale: ScaleLinear<number, number>;
+  svgDimensions: { height: number; width: number };
+  amountDomain: [number, number];
+  boundaries: ChartBoundaries;
+}) {
+  const yAxisPoints = useMemo(() => {
+    const [min, max] = yScale.domain();
+    const yStep = Math.pow(10, Math.floor(Math.log10(Math.abs(max - min))));
+    const output = [];
+    for (let i = min; i <= max; i += yStep) {
+      output.push(i);
+    }
+    return output;
+  }, [yScale]);
+
+  const ticks = useMemo(
+    () =>
+      !svgDimensions.height
+        ? []
+        : yAxisPoints.map((point, i) => ({
+            value: point.toFixed(2),
+            yOffset: ((svgDimensions.height - boundaries.bottom - boundaries.top) / (yAxisPoints.length - 1)) * (yAxisPoints.length - 1 - i),
+          })),
+    [boundaries.bottom, boundaries.top, svgDimensions.height, yAxisPoints],
+  );
+
+  return (
+    <g transform={`translate(${boundaries.left}, ${boundaries.top})`}>
+      <path
+        d={['M', BAR_GAP * -1, 0, 'L', BAR_GAP * -1, svgDimensions.height - boundaries.bottom].join(' ')}
+        style={{ stroke: 'var(--mantine-color-dimmed)' }}
+      />
+      {ticks.map(({ value, yOffset }, index) =>
+        value ? (
+          <g key={value}>
+            <line x1={-8} x2={0} y1={yOffset} y2={yOffset} style={{ stroke: 'var(--mantine-color-dimmed)' }} />
+            <line
+              x1={0}
+              x2={svgDimensions.width - boundaries.left - boundaries.right + BAR_GAP}
+              y1={yOffset}
+              y2={yOffset}
+              style={{ stroke: 'var(--mantine-color-dimmed)', strokeDasharray: index !== 0 ? '6 4' : 'unset' }}
+            />
+            <foreignObject x={boundaries.left * -1 - 16} y={yOffset - 8} className="overflow-visible">
+              <Text size="xs" c="dimmed" w={boundaries.left} ta="right" className="cursor-default">
+                {value}
+              </Text>
+            </foreignObject>
+          </g>
+        ) : null,
+      )}
+    </g>
+  );
+}
