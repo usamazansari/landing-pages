@@ -3,11 +3,23 @@ import '@mantine/charts/styles.css';
 import { Box, Flex, Text, Tooltip, rgba, useMantineTheme } from '@mantine/core';
 import { useElementSize, useMouse } from '@mantine/hooks';
 import { extent, rollup, scaleBand, scaleLinear, sum, type ScaleBand, type ScaleLinear } from 'd3';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { findDiscreteValuesUsingDivideAndConquer } from 'src/components/react/landing-pages/data-visualization/utils';
 import type { ChartBoundaries } from '../../../types';
-import { findDiscreteValuesUsingDivideAndConquer } from '../../../utils';
 
 const BAR_GAP = 4;
+
+function XAxisTextWithTooltip({ boundaries, value }: { value: string; boundaries: ChartBoundaries }) {
+  const ref = useRef<HTMLParagraphElement>(null);
+  const isOverflowing = useMemo(() => (ref.current?.scrollWidth ?? 0) > (ref.current?.clientWidth ?? 0), []);
+  return (
+    <Tooltip label={value} position="top-start" hidden={!isOverflowing} withArrow>
+      <Text size="xs" c="dimmed" w={boundaries.bottom} className="rotate-45 origin-top-left cursor-default" truncate="end" ref={ref}>
+        {value}
+      </Text>
+    </Tooltip>
+  );
+}
 
 function XAxis({
   xScale,
@@ -41,11 +53,7 @@ function XAxis({
         <g key={value}>
           <line x1={xOffset} x2={xOffset} y1={0} y2={4} style={{ stroke: 'var(--mantine-color-dimmed)' }} />
           <foreignObject x={xOffset} y={8} className="overflow-visible">
-            <Tooltip label={value} position="top-start" withArrow>
-              <Text size="xs" c="dimmed" w={boundaries.bottom} className="rotate-45 origin-top-left cursor-default" truncate="end">
-                {value}
-              </Text>
-            </Tooltip>
+            <XAxisTextWithTooltip key={value} value={value} boundaries={boundaries} />
           </foreignObject>
         </g>
       ))}
