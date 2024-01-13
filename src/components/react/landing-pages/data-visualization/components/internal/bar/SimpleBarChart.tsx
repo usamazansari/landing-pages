@@ -1,5 +1,6 @@
+import { BarChart } from '@mantine/charts';
 import '@mantine/charts/styles.css';
-import { Box, Flex, Text, Tooltip, rgba, useMantineTheme } from '@mantine/core';
+import { Box, Flex, HoverCard, Text, rgba, useMantineTheme } from '@mantine/core';
 import { useElementSize, useMouse } from '@mantine/hooks';
 import { extent, rollup, scaleBand, scaleLinear, sum } from 'd3';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -120,8 +121,8 @@ export function SimpleBarChart<DataType extends Record<string, string | number>>
                 y={boundaries.top}
                 width={bars[hoveredRectIndex]?.width + 8}
                 height={svgDimensions.height - boundaries.bottom - boundaries.top}
-                fill={rgba(theme.colors.gray[6], 0.1)}
-                stroke={theme.colors.gray[6]}
+                fill="transparent"
+                stroke="var(--mantine-color-dimmed)"
                 strokeDasharray="6 4"
               />
               <foreignObject
@@ -129,28 +130,23 @@ export function SimpleBarChart<DataType extends Record<string, string | number>>
                 y={boundaries.top}
                 width={bars[hoveredRectIndex]?.width + 8}
                 height={svgDimensions.height - boundaries.bottom - boundaries.top}>
-                <Tooltip
-                  label={
-                    <Box className="grid gap-0">
-                      <Flex gap="sm" align="center">
-                        <Text>Category</Text>
-                        <Text>{categoriesDomain[hoveredRectIndex]}</Text>
-                      </Flex>
-                      <Flex gap="sm" align="center">
-                        <Text>Amount</Text>
-                        <Text className="font-mono">{getAmountAtCategory(categoriesDomain[hoveredRectIndex])?.toFixed(2)}</Text>
-                      </Flex>
-                    </Box>
-                  }
-                  position="right-start">
-                  <Box className="w-full h-full"></Box>
-                </Tooltip>
+                <HoverCard position="right-start" shadow="sm">
+                  <HoverCard.Target>
+                    <Box className="w-full h-full"></Box>
+                  </HoverCard.Target>
+                  <HoverCard.Dropdown>
+                    <Flex align="center" gap="md">
+                      <Text>{categoriesDomain[hoveredRectIndex]}</Text>
+                      <Text className="font-mono">{getAmountAtCategory(categoriesDomain[hoveredRectIndex])?.toFixed(2)}</Text>
+                    </Flex>
+                  </HoverCard.Dropdown>
+                </HoverCard>
               </foreignObject>
             </>
           )}
         </g>
       </svg>
-      {/* <BarChart h={450} data={mantineBars} dataKey="category" series={[{ name: 'amount', color: 'blue.6' }]} tickLine="xy" tooltipAnimationDuration={200} /> */}
+      <BarChart h={450} data={mantineBars} dataKey="category" series={[{ name: 'amount', color: 'blue.6' }]} tickLine="xy" tooltipAnimationDuration={200} />
     </Flex>
   );
 }
