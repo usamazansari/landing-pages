@@ -52,7 +52,7 @@ export function YAxis({
             style={{ stroke: 'var(--mantine-color-dimmed)', strokeDasharray: index !== 0 ? '6 4' : 'unset' }}
           />
           <foreignObject x={boundaries.left * -1 - 16} y={yOffset - 8} className="overflow-visible">
-            <Text size="xs" c="dimmed" w={boundaries.left} ta="right" className="cursor-default">
+            <Text size="sm" c="dimmed" w={boundaries.left} ta="right" className="cursor-default font-mono">
               {value}
             </Text>
           </foreignObject>
