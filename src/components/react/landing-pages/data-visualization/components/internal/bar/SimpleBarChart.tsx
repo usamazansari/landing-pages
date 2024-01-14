@@ -77,6 +77,12 @@ export function SimpleBarChart<DataType extends Record<string, string | number>>
   const { ref: svgRef, ...svgDimensions } = useElementSize();
   const { ref: overlayRef, x } = useMouse();
   const [hoveredBar, setHoveredBar] = useState<(BarRectProps & BarDatum) | null>(null);
+  const [xAxisSortOrder, setXAxisSortOrder] = useState<'ascending' | 'descending' | null>(null);
+  const [yAxisSortOrder, setYAxisSortOrder] = useState<'ascending' | 'descending' | null>(null);
+
+  const [defaultSortedBars, setDefaultSortedBars] = useState<[string, number][]>([]);
+  const [ascendingSortedBars, setAscendingSortedBars] = useState<[string, number][]>([]);
+  const [descendingSortedBars, setDescendingSortedBars] = useState<[string, number][]>([]);
 
   const categoryAmountAggregation = useMemo(
     () =>
@@ -88,14 +94,13 @@ export function SimpleBarChart<DataType extends Record<string, string | number>>
     [data, excludeKeyList],
   );
 
-  const categoriesDomain = useMemo(() => [...categoryAmountAggregation.keys()] as string[], [categoryAmountAggregation]);
-  const amountDomain = useMemo(() => {
-    const [min, max] = extent([...categoryAmountAggregation.values(), 0]) as [number, number];
-    const yStep = Math.pow(10, Math.floor(Math.log10(Math.abs(max - min))));
-    const minY = Math.floor(min / yStep) * yStep;
-    const maxY = Math.ceil(max / yStep) * yStep;
-    return [minY, maxY] as [number, number];
-  }, [categoryAmountAggregation]);
+  const sortedBars = useMemo(
+    () => (xAxisSortOrder === 'ascending' ? ascendingSortedBars : xAxisSortOrder === 'descending' ? descendingSortedBars : defaultSortedBars),
+    [defaultSortedBars, ascendingSortedBars, descendingSortedBars, xAxisSortOrder],
+  );
+
+  const categoriesDomain = useMemo(() => sortedBars.map(([category]) => category) as string[], [sortedBars]);
+  const amountDomain = useMemo(() => extent([...sortedBars.map(([, amount]) => amount ?? 0)]) as [number, number], [sortedBars]);
 
   const xScale = useMemo(
     () =>
@@ -117,7 +122,7 @@ export function SimpleBarChart<DataType extends Record<string, string | number>>
     () =>
       !svgDimensions.height
         ? []
-        : ([...categoryAmountAggregation.entries()] as [string, number][]).map(
+        : sortedBars.map(
             ([category, amount]) =>
               ({
                 x: xScale(category) as number,
@@ -129,7 +134,7 @@ export function SimpleBarChart<DataType extends Record<string, string | number>>
                 amount,
               }) as BarRectProps & BarDatum,
           ),
-    [categoryAmountAggregation, boundaries.bottom, svgDimensions.height, xScale, yScale],
+    [boundaries.bottom, sortedBars, svgDimensions.height, xScale, yScale],
   );
 
   const mantineBars = useMemo(
@@ -151,13 +156,47 @@ export function SimpleBarChart<DataType extends Record<string, string | number>>
     }
   }, [bars, boundaries.left, boundaries.right, svgDimensions.width, x]);
 
+  useEffect(() => {
+    setDefaultSortedBars([...categoryAmountAggregation.entries()] as [string, number][]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (xAxisSortOrder === 'ascending') {
+      setAscendingSortedBars(defaultSortedBars.slice().sort(([a], [b]) => a.localeCompare(b)));
+    }
+  }, [defaultSortedBars, xAxisSortOrder]);
+
+  useEffect(() => {
+    if (xAxisSortOrder === 'descending') {
+      setDescendingSortedBars(defaultSortedBars.slice().sort(([a], [b]) => b.localeCompare(a)));
+    }
+  }, [defaultSortedBars, xAxisSortOrder]);
+
   return (
     <Flex direction="column" gap="lg">
       <svg ref={svgRef} className="w-full min-h-[450px]">
-        <g id="axes-group">
-          <XAxis xScale={xScale} axisLabel={'Category'} categories={categoriesDomain} svgDimensions={svgDimensions} boundaries={boundaries} />
-          <YAxis yScale={yScale} axisLabel={'Amount'} svgDimensions={svgDimensions} boundaries={boundaries} />
-        </g>
+        {svgDimensions.height && svgDimensions.width ? (
+          <g id="axes-group">
+            <XAxis
+              xScale={xScale}
+              axisLabel={'Category'}
+              categories={categoriesDomain}
+              svgDimensions={svgDimensions}
+              boundaries={boundaries}
+              sortOrder={xAxisSortOrder}
+              setSortOrder={setXAxisSortOrder}
+            />
+            <YAxis
+              yScale={yScale}
+              axisLabel={'Amount'}
+              svgDimensions={svgDimensions}
+              boundaries={boundaries}
+              sortOrder={yAxisSortOrder}
+              setSortOrder={setYAxisSortOrder}
+            />
+          </g>
+        ) : null}
         <g id="data-group">
           {bars.map(datum => (
             <DatumRect key={datum.identifier} datum={datum} />

@@ -1,14 +1,15 @@
-import { Text, Tooltip } from '@mantine/core';
+import { Box, Flex, Text, Tooltip } from '@mantine/core';
 import { type ScaleBand } from 'd3';
 import { memo, useMemo, useRef } from 'react';
 import type { ChartBoundaries } from '../../../types';
 import { BAR_GAP } from './constants';
+import { useElementSize } from '@mantine/hooks';
 
 function XAxisTextWithTooltipInstance({ boundaries, value }: { value: string; boundaries: ChartBoundaries }) {
   const ref = useRef<HTMLParagraphElement>(null);
   return (
-    <Tooltip label={value} position="top-start" hidden={!(ref.current && (ref.current.scrollWidth ?? 0) > (ref.current.clientWidth ?? 0))} withArrow>
-      <Text size="xs" c="dimmed" w={boundaries.bottom} className="rotate-45 origin-top-left cursor-default" truncate="end" ref={ref}>
+    <Tooltip label={value} position="top-start" hidden={!(ref.current && ref.current.scrollWidth > ref.current.clientWidth)} withArrow>
+      <Text size="xs" c="dimmed" w={boundaries.bottom - 24} className="rotate-45 origin-top-left cursor-default" truncate="end" ref={ref}>
         {value}
       </Text>
     </Tooltip>
@@ -23,13 +24,18 @@ export function XAxis({
   svgDimensions,
   boundaries,
   axisLabel,
+  sortOrder,
+  setSortOrder,
 }: {
   xScale: ScaleBand<string>;
   categories: string[];
   svgDimensions: { height: number; width: number };
   boundaries: ChartBoundaries;
   axisLabel: string;
+  sortOrder: 'ascending' | 'descending' | null;
+  setSortOrder: (sortOrder: 'ascending' | 'descending' | null) => void;
 }) {
+  const { ref: axisLabelTextRef, width: axisLabelWidth } = useElementSize();
   const ticks = useMemo(
     () =>
       !svgDimensions.width
@@ -58,10 +64,41 @@ export function XAxis({
       <foreignObject
         x={(svgDimensions.width - boundaries.left - boundaries.right) / 2}
         y={boundaries.bottom - boundaries.top - 16}
-        className="overflow-visible">
-        <Text size="sm" c="dimmed" fw="bold">
-          {axisLabel}
-        </Text>
+        width={axisLabelWidth + 40}
+        height={24}>
+        <Flex
+          align="center"
+          justify="center"
+          w={axisLabelWidth + 40}
+          h={24}
+          className="cursor-pointer select-none"
+          onClick={() => {
+            if (sortOrder === 'ascending') {
+              setSortOrder('descending');
+            } else if (sortOrder === 'descending') {
+              setSortOrder(null);
+            } else {
+              setSortOrder('ascending');
+            }
+          }}>
+          {sortOrder === 'descending' ? (
+            <Box w={20} h="100%">
+              <Text size="sm">
+                <span className="material-symbols-outlined">chevron_left</span>
+              </Text>
+            </Box>
+          ) : null}
+          <Text size="sm" c={!sortOrder ? 'dimmed' : undefined} fw="bold" ref={axisLabelTextRef}>
+            {axisLabel}
+          </Text>
+          {sortOrder === 'ascending' ? (
+            <Box w={20} h="100%">
+              <Text size="sm">
+                <span className="material-symbols-outlined">chevron_right</span>
+              </Text>
+            </Box>
+          ) : null}
+        </Flex>
       </foreignObject>
     </g>
   );
