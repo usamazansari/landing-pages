@@ -1,20 +1,26 @@
-import { Text } from '@mantine/core';
+import { Box, Flex, Text } from '@mantine/core';
 import { type ScaleLinear } from 'd3';
 import { useMemo } from 'react';
 import type { ChartBoundaries } from '../../../types';
 import { BAR_GAP } from './constants';
+import { useElementSize } from '@mantine/hooks';
 
 export function YAxis({
   yScale,
   axisLabel,
   svgDimensions,
   boundaries,
+  sortOrder,
+  setSortOrder,
 }: {
   yScale: ScaleLinear<number, number>;
   axisLabel: string;
   svgDimensions: { height: number; width: number };
   boundaries: ChartBoundaries;
+  sortOrder: 'ascending' | 'descending' | null;
+  setSortOrder: (sortOrder: 'ascending' | 'descending' | null) => void;
 }) {
+  const { ref: axisLabelTextRef, width: axisLabelWidth } = useElementSize();
   const yAxisPoints = useMemo(() => {
     const [min, max] = yScale.domain();
     const yStep = Math.pow(10, Math.floor(Math.log10(Math.abs(max - min))));
@@ -59,10 +65,43 @@ export function YAxis({
           </foreignObject>
         </g>
       ))}
-      <foreignObject x={boundaries.left * -1 + 8} y={(svgDimensions.height - boundaries.bottom - boundaries.top) / 2} className="overflow-visible">
-        <Text className="-rotate-90 origin-center" size="sm" c="dimmed" fw="bold">
-          {axisLabel}
-        </Text>
+      <foreignObject
+        height={axisLabelWidth + 60}
+        width={24}
+        x={boundaries.left * -1 + 8}
+        y={(svgDimensions.height - boundaries.bottom - boundaries.top) / 2 - axisLabelWidth / 2}>
+        <Flex
+          align="center"
+          className="cursor-pointer select-none h-full w-full"
+          direction="column"
+          justify="center"
+          onClick={() => {
+            if (sortOrder === 'ascending') {
+              setSortOrder('descending');
+            } else if (sortOrder === 'descending') {
+              setSortOrder(null);
+            } else {
+              setSortOrder('ascending');
+            }
+          }}>
+          {sortOrder === 'descending' ? (
+            <Box h={20} w="100%">
+              <Text size="sm">
+                <span className="material-symbols-outlined">expand_less</span>
+              </Text>
+            </Box>
+          ) : null}
+          <Text size="sm" c={!sortOrder ? 'dimmed' : undefined} fw="bold" ref={axisLabelTextRef} className="[writing-mode:vertical-rl] rotate-180">
+            {axisLabel}
+          </Text>
+          {sortOrder === 'ascending' ? (
+            <Box h={20} w="100%">
+              <Text size="sm">
+                <span className="material-symbols-outlined">expand_more</span>
+              </Text>
+            </Box>
+          ) : null}
+        </Flex>
       </foreignObject>
     </g>
   );

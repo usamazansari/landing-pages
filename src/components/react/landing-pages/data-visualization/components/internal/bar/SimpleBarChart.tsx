@@ -4,10 +4,11 @@ import { Box, Flex, HoverCard, Text, rgba, useMantineTheme } from '@mantine/core
 import { useElementSize, useMouse } from '@mantine/hooks';
 import { extent, rollup, scaleBand, scaleLinear, sum } from 'd3';
 import { useEffect, useMemo, useState } from 'react';
-import type { ChartBoundaries } from '../../../types';
+import type { AxisSortOrder, ChartBoundaries } from '../../../types';
 import { XAxis } from './XAxis';
 import { YAxis } from './YAxis';
 import { BAR_GAP } from './constants';
+import { useDataSorting } from 'src/components/react/landing-pages/data-visualization/components/internal/bar/SimpleBarChartHooks';
 
 type BarRectProps = {
   x: number;
@@ -77,30 +78,24 @@ export function SimpleBarChart<DataType extends Record<string, string | number>>
   const { ref: svgRef, ...svgDimensions } = useElementSize();
   const { ref: overlayRef, x } = useMouse();
   const [hoveredBar, setHoveredBar] = useState<(BarRectProps & BarDatum) | null>(null);
-  const [xAxisSortOrder, setXAxisSortOrder] = useState<'ascending' | 'descending' | null>(null);
-  const [yAxisSortOrder, setYAxisSortOrder] = useState<'ascending' | 'descending' | null>(null);
 
-  const [defaultSortedBars, setDefaultSortedBars] = useState<[string, number][]>([]);
-  const [ascendingSortedBars, setAscendingSortedBars] = useState<[string, number][]>([]);
-  const [descendingSortedBars, setDescendingSortedBars] = useState<[string, number][]>([]);
+  const [xAxisSortOrder, setXAxisSortOrder] = useState<AxisSortOrder>(null);
+  const [yAxisSortOrder, setYAxisSortOrder] = useState<AxisSortOrder>(null);
 
   const categoryAmountAggregation = useMemo(
     () =>
       rollup(
         data.filter(d => !excludeKeyList.includes(d.category as string)),
         v => sum(v, d => Math.abs(+d.amount)),
-        d => d.category,
+        d => d.category as string,
       ),
     [data, excludeKeyList],
   );
 
-  const sortedBars = useMemo(
-    () => (xAxisSortOrder === 'ascending' ? ascendingSortedBars : xAxisSortOrder === 'descending' ? descendingSortedBars : defaultSortedBars),
-    [defaultSortedBars, ascendingSortedBars, descendingSortedBars, xAxisSortOrder],
-  );
+  const sortedData = useDataSorting([...categoryAmountAggregation.entries()], xAxisSortOrder, yAxisSortOrder);
 
-  const categoriesDomain = useMemo(() => sortedBars.map(([category]) => category) as string[], [sortedBars]);
-  const amountDomain = useMemo(() => extent([...sortedBars.map(([, amount]) => amount ?? 0)]) as [number, number], [sortedBars]);
+  const categoriesDomain = useMemo(() => sortedData.map(([category]) => category) as string[], [sortedData]);
+  const amountDomain = useMemo(() => extent([...sortedData.map(([, amount]) => amount ?? 0)]) as [number, number], [sortedData]);
 
   const xScale = useMemo(
     () =>
@@ -122,7 +117,7 @@ export function SimpleBarChart<DataType extends Record<string, string | number>>
     () =>
       !svgDimensions.height
         ? []
-        : sortedBars.map(
+        : sortedData.map(
             ([category, amount]) =>
               ({
                 x: xScale(category) as number,
@@ -134,7 +129,7 @@ export function SimpleBarChart<DataType extends Record<string, string | number>>
                 amount,
               }) as BarRectProps & BarDatum,
           ),
-    [boundaries.bottom, sortedBars, svgDimensions.height, xScale, yScale],
+    [boundaries.bottom, sortedData, svgDimensions.height, xScale, yScale],
   );
 
   const mantineBars = useMemo(
@@ -156,23 +151,6 @@ export function SimpleBarChart<DataType extends Record<string, string | number>>
     }
   }, [bars, boundaries.left, boundaries.right, svgDimensions.width, x]);
 
-  useEffect(() => {
-    setDefaultSortedBars([...categoryAmountAggregation.entries()] as [string, number][]);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    if (xAxisSortOrder === 'ascending') {
-      setAscendingSortedBars(defaultSortedBars.slice().sort(([a], [b]) => a.localeCompare(b)));
-    }
-  }, [defaultSortedBars, xAxisSortOrder]);
-
-  useEffect(() => {
-    if (xAxisSortOrder === 'descending') {
-      setDescendingSortedBars(defaultSortedBars.slice().sort(([a], [b]) => b.localeCompare(a)));
-    }
-  }, [defaultSortedBars, xAxisSortOrder]);
-
   return (
     <Flex direction="column" gap="lg">
       <svg ref={svgRef} className="w-full min-h-[450px]">
@@ -185,7 +163,10 @@ export function SimpleBarChart<DataType extends Record<string, string | number>>
               svgDimensions={svgDimensions}
               boundaries={boundaries}
               sortOrder={xAxisSortOrder}
-              setSortOrder={setXAxisSortOrder}
+              setSortOrder={o => {
+                setXAxisSortOrder(o);
+                setYAxisSortOrder(null);
+              }}
             />
             <YAxis
               yScale={yScale}
@@ -193,7 +174,10 @@ export function SimpleBarChart<DataType extends Record<string, string | number>>
               svgDimensions={svgDimensions}
               boundaries={boundaries}
               sortOrder={yAxisSortOrder}
-              setSortOrder={setYAxisSortOrder}
+              setSortOrder={o => {
+                setYAxisSortOrder(o);
+                setXAxisSortOrder(null);
+              }}
             />
           </g>
         ) : null}
