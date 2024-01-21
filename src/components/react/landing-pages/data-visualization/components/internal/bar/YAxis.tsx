@@ -36,7 +36,7 @@ export function YAxis({
       !svgDimensions.height
         ? []
         : yAxisPoints.map((point, i) => ({
-            value: point.toFixed(2),
+            value: point.toLocaleString('en', { maximumFractionDigits: 2, notation: 'compact', compactDisplay: 'short' }),
             yOffset: ((svgDimensions.height - boundaries.bottom - boundaries.top) / (yAxisPoints.length - 1)) * (yAxisPoints.length - 1 - i),
           })),
     [boundaries.bottom, boundaries.top, svgDimensions.height, yAxisPoints],
