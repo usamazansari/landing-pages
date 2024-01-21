@@ -84,7 +84,7 @@ export function YAxis({
               setSortOrder('ascending');
             }
           }}>
-          {sortOrder === 'descending' ? (
+          {sortOrder === 'ascending' ? (
             <Box h={20} w="100%">
               <Text size="sm">
                 <span className="material-symbols-outlined">expand_less</span>
@@ -94,7 +94,7 @@ export function YAxis({
           <Text size="sm" c={!sortOrder ? 'dimmed' : undefined} fw="bold" ref={axisLabelTextRef} className="[writing-mode:vertical-rl] rotate-180">
             {axisLabel}
           </Text>
-          {sortOrder === 'ascending' ? (
+          {sortOrder === 'descending' ? (
             <Box h={20} w="100%">
               <Text size="sm">
                 <span className="material-symbols-outlined">expand_more</span>
