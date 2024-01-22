@@ -5,7 +5,7 @@ import { useElementSize, useMouse, usePrevious } from '@mantine/hooks';
 import { animated, easings, useSpring, useSpringRef } from '@react-spring/web';
 import { extent, scaleBand, scaleLinear } from 'd3';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useDataSorting } from 'src/components/react/landing-pages/data-visualization/components/internal/bar/SimpleBarChartHooks';
+import { useDataSorting } from './SimpleBarChartHooks';
 import type { AxisSortOrder, ChartBoundaries } from '../../../types';
 import { XAxis } from './XAxis';
 import { YAxis } from './YAxis';
@@ -159,6 +159,8 @@ export function SimpleBarChart<DataType extends Record<string, string | number>>
 
   const previousBarsRef = usePrevious(bars);
 
+  const previousBarMap = useMemo(() => new Map(previousBarsRef?.map(d => [d.identifier, d]) ?? []), [previousBarsRef]);
+
   const mantineBars = useMemo(
     () =>
       sortedData.map(([category, amount]) => ({
@@ -178,7 +180,7 @@ export function SimpleBarChart<DataType extends Record<string, string | number>>
     }
   }, [bars, boundaries.left, boundaries.right, svgDimensions.width, x]);
 
-  const oldDatum = useCallback((identifier: string) => previousBarsRef?.find(d => d.identifier === identifier), [previousBarsRef]);
+  const oldDatum = useCallback((identifier: string) => previousBarMap.get(identifier), [previousBarMap]);
 
   return (
     <Flex direction="column" gap="lg">
