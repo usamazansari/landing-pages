@@ -1,14 +1,15 @@
 import { BarChart } from '@mantine/charts';
 import '@mantine/charts/styles.css';
 import { Box, Flex, HoverCard, Text, rgba, useMantineTheme } from '@mantine/core';
-import { useElementSize, useMouse } from '@mantine/hooks';
-import { extent, rollup, scaleBand, scaleLinear, sum } from 'd3';
-import { useEffect, useMemo, useState } from 'react';
+import { useElementSize, useMouse, usePrevious } from '@mantine/hooks';
+import { animated, easings, useSpring, useSpringRef } from '@react-spring/web';
+import { extent, scaleBand, scaleLinear } from 'd3';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useDataSorting } from 'src/components/react/landing-pages/data-visualization/components/internal/bar/SimpleBarChartHooks';
 import type { AxisSortOrder, ChartBoundaries } from '../../../types';
 import { XAxis } from './XAxis';
 import { YAxis } from './YAxis';
 import { BAR_GAP } from './constants';
-import { useDataSorting } from 'src/components/react/landing-pages/data-visualization/components/internal/bar/SimpleBarChartHooks';
 
 type BarRectProps = {
   x: number;
@@ -23,9 +24,32 @@ type BarDatum = {
   amount: number;
 };
 
-function DatumRect({ datum }: { datum: BarRectProps }) {
+function DatumRect({ datum, oldDatum }: { datum: BarRectProps; oldDatum?: BarRectProps | undefined }) {
   const theme = useMantineTheme();
-  return <rect key={datum.identifier} x={datum.x} y={datum.y} width={datum.width} height={datum.height} fill={rgba(theme.colors.blue[6], 1)} />;
+
+  const springRef = useSpringRef();
+  const [spring, api] = useSpring(
+    () => ({
+      ref: springRef,
+      from: { x: oldDatum?.x ?? 0 },
+      to: { x: datum.x },
+      config: {
+        duration: 1000,
+        easing: easings.easeInOutSine,
+      },
+    }),
+    [oldDatum?.x, datum.x],
+  );
+
+  useEffect(() => {
+    api.start();
+  }, [api, datum.x, oldDatum?.x]);
+
+  return (
+    <>
+      <animated.rect key={datum.identifier} x={spring.x} y={datum.y} width={datum.width} height={datum.height} fill={rgba(theme.colors.blue[6], 1)} />;
+    </>
+  );
 }
 
 function RectTooltip({
@@ -38,6 +62,7 @@ function RectTooltip({
   svgDimensions: { width: number; height: number };
 }) {
   const theme = useMantineTheme();
+
   return bar === null ? null : (
     <>
       <rect
@@ -56,8 +81,12 @@ function RectTooltip({
           </HoverCard.Target>
           <HoverCard.Dropdown>
             <Flex align="center" gap="md">
-              <Text>{bar.category}</Text>
-              <Text className="font-mono">{bar.amount.toFixed(2)}</Text>
+              <Text fw="bold" className="leading-[normal]">
+                {bar.category}
+              </Text>
+              <Text fw="bold" className="font-mono leading-[normal]">
+                {bar.amount.toFixed(2)}
+              </Text>
             </Flex>
           </HoverCard.Dropdown>
         </HoverCard>
@@ -82,20 +111,16 @@ export function SimpleBarChart<DataType extends Record<string, string | number>>
   const [xAxisSortOrder, setXAxisSortOrder] = useState<AxisSortOrder>(null);
   const [yAxisSortOrder, setYAxisSortOrder] = useState<AxisSortOrder>(null);
 
-  const categoryAmountAggregation = useMemo(
-    () =>
-      rollup(
-        data.filter(d => !excludeKeyList.includes(d.category as string)),
-        v => sum(v, d => Math.abs(+d.amount)),
-        d => d.category as string,
-      ),
-    [data, excludeKeyList],
-  );
-
-  const sortedData = useDataSorting([...categoryAmountAggregation.entries()], xAxisSortOrder, yAxisSortOrder);
+  const sortedData = useDataSorting({ data, xAxisSortOrder, yAxisSortOrder, excludeKeyList });
 
   const categoriesDomain = useMemo(() => sortedData.map(([category]) => category) as string[], [sortedData]);
-  const amountDomain = useMemo(() => extent([...sortedData.map(([, amount]) => amount ?? 0)]) as [number, number], [sortedData]);
+  const amountDomain = useMemo(() => {
+    const [min, max] = extent([...sortedData.map(([, amount]) => amount), 0]) as [number, number];
+    const yStep = Math.pow(10, Math.floor(Math.log10(Math.abs(max - min))));
+    const minY = Math.floor(min / yStep) * yStep;
+    const maxY = Math.ceil(max / yStep) * yStep;
+    return [minY, maxY] as [number, number];
+  }, [sortedData]);
 
   const xScale = useMemo(
     () =>
@@ -132,13 +157,15 @@ export function SimpleBarChart<DataType extends Record<string, string | number>>
     [boundaries.bottom, sortedData, svgDimensions.height, xScale, yScale],
   );
 
+  const previousBarsRef = usePrevious(bars);
+
   const mantineBars = useMemo(
     () =>
-      [...categoryAmountAggregation.entries()].map(([category, amount]) => ({
+      sortedData.map(([category, amount]) => ({
         category,
         amount,
       })),
-    [categoryAmountAggregation],
+    [sortedData],
   );
 
   useEffect(() => {
@@ -150,6 +177,8 @@ export function SimpleBarChart<DataType extends Record<string, string | number>>
       }
     }
   }, [bars, boundaries.left, boundaries.right, svgDimensions.width, x]);
+
+  const oldDatum = useCallback((identifier: string) => previousBarsRef?.find(d => d.identifier === identifier), [previousBarsRef]);
 
   return (
     <Flex direction="column" gap="lg">
@@ -183,7 +212,7 @@ export function SimpleBarChart<DataType extends Record<string, string | number>>
         ) : null}
         <g id="data-group">
           {bars.map(datum => (
-            <DatumRect key={datum.identifier} datum={datum} />
+            <DatumRect key={datum.identifier} datum={datum} oldDatum={oldDatum(datum.identifier)} />
           ))}
           <rect
             ref={overlayRef}
