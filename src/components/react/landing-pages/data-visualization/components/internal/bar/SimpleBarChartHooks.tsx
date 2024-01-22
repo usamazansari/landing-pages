@@ -1,9 +1,29 @@
 import { useCallback, useMemo, useState } from 'react';
 import type { AxisSortOrder } from '../../../types';
-import { ascending, descending } from 'd3';
+import { ascending, descending, rollup, sum } from 'd3';
 
-export function useDataSorting(data: [string, number][], xAxisSortOrder: AxisSortOrder, yAxisSortOrder: AxisSortOrder) {
+export function useDataSorting<DataType extends Record<string, string | number>>({
+  data,
+  excludeKeyList = [],
+  xAxisSortOrder,
+  yAxisSortOrder,
+}: {
+  data: DataType[];
+  excludeKeyList?: string[];
+  xAxisSortOrder: AxisSortOrder;
+  yAxisSortOrder: AxisSortOrder;
+}) {
   const [dictionary, setDictionary] = useState<Record<string, [string, number][]>>({});
+
+  const aggregation = useMemo(
+    () =>
+      rollup(
+        data.filter(d => !excludeKeyList.includes(d.category as string)),
+        v => sum(v, d => Math.abs(+d.amount)),
+        d => d.category as string,
+      ),
+    [data, excludeKeyList],
+  );
 
   const sortData = useCallback(
     (data: [string, number][]) =>
@@ -26,11 +46,11 @@ export function useDataSorting(data: [string, number][], xAxisSortOrder: AxisSor
     if (dictionary[cacheKey]) {
       return dictionary[cacheKey];
     } else {
-      const sortedDataByOrder = sortData(data);
+      const sortedDataByOrder = sortData([...aggregation.entries()]);
       setDictionary(prevCache => ({ ...prevCache, [cacheKey]: sortedDataByOrder }));
       return sortedDataByOrder;
     }
-  }, [data, dictionary, sortData, xAxisSortOrder, yAxisSortOrder]);
+  }, [aggregation, dictionary, sortData, xAxisSortOrder, yAxisSortOrder]);
 
   return sortedData;
 }
