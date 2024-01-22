@@ -1,7 +1,7 @@
 import { Anchor, Box, Breadcrumbs, Flex, Space, Text } from '@mantine/core';
 import { useMemo } from 'react';
 import { PersonalExpenses } from '../data';
-import { SimpleBarChart, SimpleLineChart } from './internal';
+import { SimpleBarChart } from './internal';
 
 export function DataVisualization() {
   const items = useMemo(() => {
@@ -35,7 +35,6 @@ export function DataVisualization() {
         </Flex>
       </Box>
       <Box>
-        {/* <SimpleLineChart data={PersonalExpenses} /> */}
         <SimpleBarChart data={PersonalExpenses} excludeKeyList={['Salary', 'Laundry', 'Treasure']} />
       </Box>
     </Box>
