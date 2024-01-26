@@ -1,6 +1,6 @@
 import { BarChart } from '@mantine/charts';
 import '@mantine/charts/styles.css';
-import { Box, Flex, HoverCard, Text, rgba, useMantineTheme } from '@mantine/core';
+import { Anchor, Box, Flex, HoverCard, Text, Title, rgba, useMantineTheme } from '@mantine/core';
 import { useElementSize, useMouse, usePrevious } from '@mantine/hooks';
 import { animated, easings, useSpring, useSpringRef } from '@react-spring/web';
 import { extent, scaleBand, scaleLinear } from 'd3';
@@ -186,6 +186,13 @@ export function SimpleBarChart<DataType extends Record<string, string | number>>
 
   return (
     <Flex direction="column" gap="lg">
+      <Flex align="center">
+        <Anchor href="#d3-bar-chart" underline="never">
+          <Title fw="normal" order={3}>
+            Simple bar chart implementation using d3
+          </Title>
+        </Anchor>
+      </Flex>
       <svg ref={svgRef} className="w-full min-h-[450px]">
         {svgDimensions.height && svgDimensions.width ? (
           <g id="axes-group">
@@ -234,6 +241,13 @@ export function SimpleBarChart<DataType extends Record<string, string | number>>
           <RectTooltip bar={hoveredBar} boundaries={boundaries} svgDimensions={svgDimensions} />
         </g>
       </svg>
+      <Flex align="center">
+        <Anchor href="#mantine-bar-chart" underline="never">
+          <Title fw="normal" order={3}>
+            Simple bar chart implementation using Mantine
+          </Title>
+        </Anchor>
+      </Flex>
       <BarChart
         h={450}
         data={mantineBars}
