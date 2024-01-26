@@ -11,6 +11,7 @@ export function YAxis({
   svgDimensions,
   boundaries,
   sortOrder,
+  showTicks,
   setSortOrder,
 }: {
   yScale: ScaleLinear<number, number>;
@@ -18,6 +19,7 @@ export function YAxis({
   svgDimensions: { height: number; width: number };
   boundaries: ChartBoundaries;
   sortOrder: 'ascending' | 'descending' | null;
+  showTicks: boolean;
   setSortOrder: (sortOrder: 'ascending' | 'descending' | null) => void;
 }) {
   const { ref: axisLabelTextRef, width: axisLabelWidth } = useElementSize();
@@ -36,7 +38,7 @@ export function YAxis({
       !svgDimensions.height
         ? []
         : yAxisPoints.map((point, i) => ({
-            value: point.toLocaleString('en', { maximumFractionDigits: 2, notation: 'compact', compactDisplay: 'short' }),
+            value: point.toLocaleString('en', { minimumFractionDigits: 2, maximumFractionDigits: 2, notation: 'compact', compactDisplay: 'short' }),
             yOffset: ((svgDimensions.height - boundaries.bottom - boundaries.top) / (yAxisPoints.length - 1)) * (yAxisPoints.length - 1 - i),
           })),
     [boundaries.bottom, boundaries.top, svgDimensions.height, yAxisPoints],
@@ -50,14 +52,16 @@ export function YAxis({
       />
       {ticks.map(({ value, yOffset }, index) => (
         <g key={value}>
+          {showTicks ? (
+            <line
+              x1={BAR_GAP * -1}
+              x2={svgDimensions.width - boundaries.left - boundaries.right + BAR_GAP}
+              y1={yOffset}
+              y2={yOffset}
+              style={{ stroke: 'var(--mantine-color-dimmed)', strokeDasharray: index !== 0 ? '6 4' : 'unset' }}
+            />
+          ) : null}
           <line x1={-12} x2={BAR_GAP * -1} y1={yOffset} y2={yOffset} style={{ stroke: 'var(--mantine-color-dimmed)' }} />
-          <line
-            x1={BAR_GAP * -1}
-            x2={svgDimensions.width - boundaries.left - boundaries.right + BAR_GAP}
-            y1={yOffset}
-            y2={yOffset}
-            style={{ stroke: 'var(--mantine-color-dimmed)', strokeDasharray: index !== 0 ? '6 4' : 'unset' }}
-          />
           <foreignObject x={boundaries.left * -1 - 16} y={yOffset - 8} className="overflow-visible">
             <Text size="xs" c="dimmed" w={boundaries.left} ta="right" fw="bold" className="cursor-default font-mono">
               {value}

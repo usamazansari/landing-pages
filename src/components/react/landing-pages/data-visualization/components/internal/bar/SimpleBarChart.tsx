@@ -31,10 +31,10 @@ function DatumRect({ datum, oldDatum }: { datum: BarRectProps; oldDatum?: BarRec
   const [spring, api] = useSpring(
     () => ({
       ref: springRef,
-      from: { x: oldDatum?.x ?? 0 },
+      from: { x: oldDatum?.x },
       to: { x: datum.x },
       config: {
-        duration: 1000,
+        duration: 500,
         easing: easings.easeInOutSine,
       },
     }),
@@ -42,14 +42,12 @@ function DatumRect({ datum, oldDatum }: { datum: BarRectProps; oldDatum?: BarRec
   );
 
   useEffect(() => {
-    api.start();
+    if (!!datum.x && !!oldDatum?.x) {
+      api.start();
+    }
   }, [api, datum.x, oldDatum?.x]);
 
-  return (
-    <>
-      <animated.rect key={datum.identifier} x={spring.x} y={datum.y} width={datum.width} height={datum.height} fill={rgba(theme.colors.blue[6], 1)} />;
-    </>
-  );
+  return <animated.rect key={datum.identifier} x={spring.x} y={datum.y} width={datum.width} height={datum.height} fill={rgba(theme.colors.blue[6], 1)} />;
 }
 
 function RectTooltip({
@@ -75,16 +73,16 @@ function RectTooltip({
         strokeDasharray="6 4"
       />
       <foreignObject x={bar.x - 4} y={boundaries.top} width={bar.width + 8} height={svgDimensions.height - boundaries.bottom - boundaries.top}>
-        <HoverCard position="right-start" shadow="sm" withArrow>
+        <HoverCard position="right-start" shadow="sm" offset={{ mainAxis: -8, crossAxis: 0, alignmentAxis: -16 }} arrowPosition="center">
           <HoverCard.Target>
             <Box className="w-full h-full"></Box>
           </HoverCard.Target>
-          <HoverCard.Dropdown>
+          <HoverCard.Dropdown p={8}>
             <Flex align="center" gap="md">
               <Text fw="bold" className="leading-[normal]">
                 {bar.category}
               </Text>
-              <Text fw="bold" className="font-mono leading-[normal]">
+              <Text fw="bold" size="sm" className="font-mono leading-[normal]">
                 {bar.amount.toFixed(2)}
               </Text>
             </Flex>
@@ -111,7 +109,12 @@ export function SimpleBarChart<DataType extends Record<string, string | number>>
   const [xAxisSortOrder, setXAxisSortOrder] = useState<AxisSortOrder>(null);
   const [yAxisSortOrder, setYAxisSortOrder] = useState<AxisSortOrder>(null);
 
-  const sortedData = useDataSorting({ data, xAxisSortOrder, yAxisSortOrder, excludeKeyList });
+  const sortedData = useDataSorting({
+    data,
+    xAxisSortOrder,
+    yAxisSortOrder,
+    excludeKeyList,
+  });
 
   const categoriesDomain = useMemo(() => sortedData.map(([category]) => category) as string[], [sortedData]);
   const amountDomain = useMemo(() => {
@@ -158,8 +161,7 @@ export function SimpleBarChart<DataType extends Record<string, string | number>>
   );
 
   const previousBarsRef = usePrevious(bars);
-
-  const previousBarMap = useMemo(() => new Map(previousBarsRef?.map(d => [d.identifier, d]) ?? []), [previousBarsRef]);
+  const previousBarMap = useMemo(() => new Map(previousBarsRef?.map((d) => [d.identifier, d]) ?? []), [previousBarsRef]);
 
   const mantineBars = useMemo(
     () =>
@@ -194,10 +196,11 @@ export function SimpleBarChart<DataType extends Record<string, string | number>>
               svgDimensions={svgDimensions}
               boundaries={boundaries}
               sortOrder={xAxisSortOrder}
-              setSortOrder={o => {
+              setSortOrder={(o) => {
                 setXAxisSortOrder(o);
                 setYAxisSortOrder(null);
               }}
+              showTicks
             />
             <YAxis
               yScale={yScale}
@@ -205,15 +208,16 @@ export function SimpleBarChart<DataType extends Record<string, string | number>>
               svgDimensions={svgDimensions}
               boundaries={boundaries}
               sortOrder={yAxisSortOrder}
-              setSortOrder={o => {
+              setSortOrder={(o) => {
                 setYAxisSortOrder(o);
                 setXAxisSortOrder(null);
               }}
+              showTicks
             />
           </g>
         ) : null}
         <g id="data-group">
-          {bars.map(datum => (
+          {bars.map((datum) => (
             <DatumRect key={datum.identifier} datum={datum} oldDatum={oldDatum(datum.identifier)} />
           ))}
           <rect

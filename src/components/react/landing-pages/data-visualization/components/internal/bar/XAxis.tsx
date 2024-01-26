@@ -25,6 +25,7 @@ export function XAxis({
   boundaries,
   axisLabel,
   sortOrder,
+  showTicks,
   setSortOrder,
 }: {
   xScale: ScaleBand<string>;
@@ -33,6 +34,7 @@ export function XAxis({
   boundaries: ChartBoundaries;
   axisLabel: string;
   sortOrder: 'ascending' | 'descending' | null;
+  showTicks: boolean;
   setSortOrder: (sortOrder: 'ascending' | 'descending' | null) => void;
 }) {
   const { ref: axisLabelTextRef, width: axisLabelWidth } = useElementSize();
@@ -55,8 +57,17 @@ export function XAxis({
       />
       {ticks.map(({ value, xOffset }) => (
         <g key={value}>
-          <line x1={xOffset} x2={xOffset} y1={0} y2={4} style={{ stroke: 'var(--mantine-color-dimmed)' }} />
-          <foreignObject x={xOffset} y={8} className="overflow-visible">
+          {showTicks ? (
+            <line
+              x1={xOffset}
+              x2={xOffset}
+              y1={(svgDimensions.height - boundaries.bottom - boundaries.top) * -1}
+              y2={0}
+              style={{ stroke: 'var(--mantine-color-dimmed)', strokeDasharray: '6 4' }}
+            />
+          ) : null}
+          <line x1={xOffset} x2={xOffset} y1={0} y2={8} style={{ stroke: 'var(--mantine-color-dimmed)' }} />
+          <foreignObject x={xOffset} y={16} className="overflow-visible">
             <XAxisTextWithTooltip key={value} value={value} boundaries={boundaries} />
           </foreignObject>
         </g>
