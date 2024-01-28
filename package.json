@@ -1,7 +1,7 @@
 {
   "name": "landing-pages",
   "type": "module",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
@@ -13,6 +13,7 @@
     "@astrojs/check": "^0.3.3",
     "@astrojs/markdoc": "^0.8.0",
     "@astrojs/mdx": "^2.0.1",
+    "@astrojs/netlify": "^5.0.0",
     "@astrojs/react": "^3.0.7",
     "@astrojs/tailwind": "^5.0.3",
     "@astrojs/vercel": "^6.1.0",
