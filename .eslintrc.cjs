@@ -32,7 +32,29 @@ module.exports = {
     'no-unused-vars': 'warn',
     'no-template-curly-in-string': 'warn',
     'object-shorthand': 'warn',
-    'prettier/prettier': 'warn',
+    'prettier/prettier': [
+      'warn',
+      {
+        arrowParens: 'always',
+        bracketSameLine: true,
+        singleQuote: true,
+        trailingComma: 'all',
+        tabWidth: 2,
+        printWidth: 160,
+        endOfLine: 'crlf',
+        overrides: [
+          {
+            files: ['*.html'],
+            options: {
+              parser: 'html',
+            },
+          },
+        ],
+      },
+      {
+        usePrettierrc: true,
+      },
+    ],
     'react-hooks/exhaustive-deps': 'warn',
     'react-hooks/rules-of-hooks': 'error',
     'react/no-array-index-key': 'warn',
