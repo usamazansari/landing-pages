@@ -4,14 +4,14 @@ import { useDebouncedState } from '@mantine/hooks';
 import type { SerializedError } from '@reduxjs/toolkit';
 import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { useCallback, useEffect, useState } from 'react';
-import { setSelectedCity, useAppDispatch, useAppSelector, useLazySearchCityQuery } from '../../store';
+// import { setSelectedCity, useAppDispatch, useAppSelector, useLazySearchCityQuery } from '../../store';
 import type { Location } from '../../types';
 
 export function SearchCity() {
-  const dispatch = useAppDispatch();
-  const apiKey = useAppSelector(state => state.weather.apiKey);
+  // const dispatch = useAppDispatch();
+  // const apiKey = useAppSelector(state => state.weather.apiKey);
 
-  const [searchCity, { data, isLoading, isSuccess, isError, error }] = useLazySearchCityQuery({});
+  // const [searchCity, { data, isLoading, isSuccess, isError, error }] = useLazySearchCityQuery({});
   const [searchString, setSearchString] = useState('');
   const [debouncedSearchString, setDebouncedSearchString] = useDebouncedState('', 250);
   const [searchResults, setSearchResults] = useState<Location[]>([]);
@@ -20,13 +20,13 @@ export function SearchCity() {
     onDropdownClose: () => combobox.resetSelectedOption(),
   });
 
-  const options = searchResults.map(item => (
-    <Combobox.Option value={item.value as string} key={item.value as string}>
-      <Text ta="left" size="sm">
-        {item.name}
-      </Text>
-    </Combobox.Option>
-  ));
+  // const options = searchResults.map(item => (
+  //   <Combobox.Option value={item.value as string} key={item.value as string}>
+  //     <Text ta="left" size="sm">
+  //       {item.name}
+  //     </Text>
+  //   </Combobox.Option>
+  // ));
 
   const printError = useCallback(
     (error: FetchBaseQueryError | SerializedError | undefined) =>
@@ -38,39 +38,39 @@ export function SearchCity() {
     setDebouncedSearchString(searchString);
   }, [searchString, setDebouncedSearchString]);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      if (debouncedSearchString.length >= 3) {
-        try {
-          const cities = await searchCity({ apiKey, city: debouncedSearchString }).unwrap();
-          setSearchResults(cities ?? []);
-        } catch (e) {
-          console.log(e);
-          setSearchResults([]);
-        }
-      }
-    };
-    fetchData();
-  }, [apiKey, searchCity, debouncedSearchString]);
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     if (debouncedSearchString.length >= 3) {
+  //       try {
+  //         const cities = await searchCity({ apiKey, city: debouncedSearchString }).unwrap();
+  //         setSearchResults(cities ?? []);
+  //       } catch (e) {
+  //         console.log(e);
+  //         setSearchResults([]);
+  //       }
+  //     }
+  //   };
+  //   fetchData();
+  // }, [apiKey, searchCity, debouncedSearchString]);
 
   return (
     <Combobox
       store={combobox}
       withinPortal={false}
-      onOptionSubmit={value => {
-        const selectedCity = searchResults.find(item => item.name.toLowerCase() === value.toLowerCase());
-        dispatch(setSelectedCity(selectedCity ?? null));
+      onOptionSubmit={(value) => {
+        const selectedCity = searchResults.find((item) => item.name.toLowerCase() === value.toLowerCase());
+        // dispatch(setSelectedCity(selectedCity ?? null));
         combobox.closeDropdown();
       }}>
       <Combobox.DropdownTarget>
         <InputBase
           placeholder="Enter at least three characters to search"
           value={searchString}
-          rightSection={isLoading ? <Loader size={18} /> : <Combobox.Chevron />}
+          // rightSection={isLoading ? <Loader size={18} /> : <Combobox.Chevron />}
           onClick={() => {
             combobox.openDropdown();
           }}
-          onChange={e => {
+          onChange={(e) => {
             setSearchString(e.target.value);
           }}
         />
@@ -78,7 +78,7 @@ export function SearchCity() {
 
       <Combobox.Dropdown>
         <Combobox.Options>
-          {isLoading ? (
+          {/* {isLoading ? (
             <Combobox.Options>
               <Combobox.Empty>
                 <Flex align="center" justify="center" gap="xs">
@@ -115,7 +115,14 @@ export function SearchCity() {
                 </Text>
               </Combobox.Empty>
             </Combobox.Options>
-          )}
+          )} */}
+          <Combobox.Options>
+            <Combobox.Empty>
+              <Text ta="left" size="sm">
+                Search for a city name to show the results.
+              </Text>
+            </Combobox.Empty>
+          </Combobox.Options>
         </Combobox.Options>
       </Combobox.Dropdown>
     </Combobox>
