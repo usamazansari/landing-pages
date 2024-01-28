@@ -1,7 +1,7 @@
 {
   "name": "landing-pages",
   "type": "module",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
@@ -57,3 +57,4 @@
     "eslint-plugin-react-hooks": "^4.6.0"
   }
 }
+
