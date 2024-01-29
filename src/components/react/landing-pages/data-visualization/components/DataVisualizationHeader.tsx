@@ -26,7 +26,7 @@ export function DataVisualizationHeader() {
             title="Toggle Sidebar"
             style={{ alignSelf: 'center' }}
           />
-          <UnstyledButton component="a" href="/news" className="leading-8">
+          <UnstyledButton component="a" href="/data-visualization" className="leading-8">
             Data Visualization
           </UnstyledButton>
         </Flex>

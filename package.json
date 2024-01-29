@@ -1,7 +1,7 @@
 {
   "name": "landing-pages",
   "type": "module",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
@@ -16,7 +16,6 @@
     "@astrojs/netlify": "^5.0.0",
     "@astrojs/react": "^3.0.7",
     "@astrojs/tailwind": "^5.0.3",
-    "@astrojs/vercel": "^6.1.0",
     "@mantine/carousel": "^7.4.0",
     "@mantine/charts": "^7.4.0",
     "@mantine/core": "^7.4.0",
@@ -28,8 +27,6 @@
     "@mantine/spotlight": "^7.4.0",
     "@react-spring/web": "^9.7.3",
     "@reduxjs/toolkit": "^2.0.1",
-    "@vercel/analytics": "^1.1.1",
-    "@vercel/speed-insights": "^1.0.2",
     "astro": "^4.0.6",
     "d3": "^7.8.5",
     "dayjs": "^1.11.10",

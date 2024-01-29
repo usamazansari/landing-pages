@@ -16,9 +16,9 @@ export function NewsLayout() {
   const { isNarrowViewport } = useScreenSizeWatcher({ theme, width });
 
   const dispatch = useAppDispatch();
-  const apiKey = useAppSelector(state => state.news.apiKey);
-  const category = useAppSelector(state => state.news.selectedCategory);
-  const shouldRefetch = useAppSelector(state => state.news.shouldRefetch);
+  const apiKey = useAppSelector((state) => state.news.apiKey);
+  const category = useAppSelector((state) => state.news.selectedCategory);
+  const shouldRefetch = useAppSelector((state) => state.news.shouldRefetch);
   const { data, error, isError, isLoading, isSuccess, refetch } = useGetNewsQuery(
     { apiKey, category },
     {
@@ -55,9 +55,9 @@ export function NewsLayout() {
   useEffect(() => {
     if (isSuccess) {
       const categories = data?.news
-        ?.map(article => article.category)
+        ?.map((article) => article.category)
         .flat()
-        .filter(c => c !== category);
+        .filter((c) => c !== category);
       const relatedCategories = Object.entries(
         categories?.reduce((acc: Record<string, number>, category) => {
           acc[category] = (acc[category] || 0) + 1;
@@ -72,7 +72,7 @@ export function NewsLayout() {
   }, [category, data?.news, dispatch, isSuccess]);
 
   return (
-    <NewsSection name={category}>
+    <NewsSection category={category}>
       <Box className="grid gap-md">
         {isError ? (
           <Box className="grid w-full h-full">
@@ -105,7 +105,7 @@ export function NewsLayout() {
             `,
             }}>
             {isLoading ? (
-              latestNewsGridAreaList.map(area => (
+              latestNewsGridAreaList.map((area) => (
                 <Box key={area} style={{ gridArea: area }}>
                   <NewsSkeleton largeArea={!isNarrowViewport ? ['top-middle-left-center', 'bottom-middle-right-center'].includes(area) : false} />
                 </Box>
