@@ -5,8 +5,8 @@ import { NewsLayout, RelatedPopularNews } from './internal';
 
 export function News() {
   const dispatch = useAppDispatch();
-  const category = useAppSelector(state => state.news.selectedCategory);
-  const relatedPopularCategories = useAppSelector(state => state.news.relatedPopularCategories);
+  const category = useAppSelector((state) => state.news.selectedCategory);
+  const relatedPopularCategories = useAppSelector((state) => state.news.relatedPopularCategories);
 
   const items = useMemo(() => {
     const items = [] as { title: string; icon: string; href: string }[];
@@ -18,7 +18,7 @@ export function News() {
   }, [category]);
 
   const breadCrumbItems = useMemo(() => {
-    return items.map(item => (
+    return items.map((item) => (
       <Anchor key={item.title.toLowerCase()} href={item.href} underline="never">
         <Flex align="center" gap="xs">
           {!item.icon ? null : (
@@ -71,11 +71,12 @@ export function News() {
             Related News
           </Text>
           <Space style={{ margin: '0.5rem 0rem' }} />
-          {relatedPopularCategories.map(c => (
+          {relatedPopularCategories.map((c) => (
             <RelatedPopularNews key={c} category={c} />
           ))}
         </Box>
       )}
+      <Space />
     </Box>
   );
 }

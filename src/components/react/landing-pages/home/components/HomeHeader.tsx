@@ -1,5 +1,5 @@
 import { DarkModeSwitch } from '@landing-pages/react/common/components';
-import { Box, Divider, Flex, UnstyledButton } from '@mantine/core';
+import { Box, Divider, Flex, Text, UnstyledButton } from '@mantine/core';
 
 export function HomeHeader() {
   return (
@@ -7,7 +7,9 @@ export function HomeHeader() {
       <Flex gap="md" align="center" justify="space-between" py="lg" px="md" style={{ backgroundColor: 'var(--mantine-color-body)' }}>
         <Flex gap="md">
           <UnstyledButton component="a" href="/" className="leading-8">
-            Landing Pages
+            <Text size="xl" fw={700}>
+              Landing Pages
+            </Text>
           </UnstyledButton>
         </Flex>
         <Flex>

@@ -9,8 +9,8 @@ import { NewsSection } from './NewsSection';
 
 export function RelatedPopularNews({ category }: { category: string }) {
   const dispatch = useAppDispatch();
-  const apiKey = useAppSelector(state => state.news.apiKey);
-  const shouldRefetch = useAppSelector(state => state.news.shouldRefetch);
+  const apiKey = useAppSelector((state) => state.news.apiKey);
+  const shouldRefetch = useAppSelector((state) => state.news.shouldRefetch);
   const { data, error, isError, isLoading, isSuccess, refetch } = useGetNewsQuery(
     { apiKey, category },
     {
@@ -48,7 +48,7 @@ export function RelatedPopularNews({ category }: { category: string }) {
   }, [dispatch, refetch, shouldRefetch]);
 
   return (
-    <NewsSection name={category}>
+    <NewsSection category={category}>
       {isLoading ? <NewsCarousel newsItemList={emptyNews} /> : null}
       {isSuccess ? <NewsCarousel newsItemList={newsItemList} /> : null}
       {isError ? <ErrorCard error={error} /> : null}

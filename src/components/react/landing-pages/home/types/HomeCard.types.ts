@@ -3,7 +3,4 @@ export interface IHomeCard {
   icon: string;
   label: string;
   href: string;
-  activeUsers: number;
-  image: string;
 }
-
