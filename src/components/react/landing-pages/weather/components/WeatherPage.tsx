@@ -1,21 +1,20 @@
 import { PageWithAffix } from '@landing-pages/react/common/components';
 import { useEffect } from 'react';
-import { setWeatherAPIKey, setGeocodingAPIKey, useWeatherAppDispatch, useGeoCodingAppDispatch } from '../store';
-import { WeatherHeader } from './WeatherHeader';
+import { setGeoCodingAPIKey, setWeatherAPIKey, useAppDispatch } from '../store';
 import { Weather } from './Weather';
 import { WeatherFooter } from './WeatherFooter';
+import { WeatherHeader } from './WeatherHeader';
 
 export function WeatherPage({ geoCodingAPIKey, weatherAPIKey }: { geoCodingAPIKey: string; weatherAPIKey: string }) {
-  const geoCodingDispatch = useGeoCodingAppDispatch();
-  const weatherDispatch = useWeatherAppDispatch();
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
-    weatherDispatch(setWeatherAPIKey(weatherAPIKey));
-  }, [weatherDispatch, geoCodingDispatch, weatherAPIKey]);
+    dispatch(setWeatherAPIKey(weatherAPIKey));
+  }, [dispatch, weatherAPIKey]);
 
   useEffect(() => {
-    geoCodingDispatch(setGeocodingAPIKey(geoCodingAPIKey));
-  }, [weatherDispatch, geoCodingDispatch, geoCodingAPIKey]);
+    dispatch(setGeoCodingAPIKey(geoCodingAPIKey));
+  }, [dispatch, geoCodingAPIKey]);
 
   return <PageWithAffix nav={<WeatherHeader />} main={<Weather />} footer={<WeatherFooter />} />;
 }

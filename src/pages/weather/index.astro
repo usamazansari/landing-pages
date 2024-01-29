@@ -3,10 +3,11 @@ import Layout from '../../Layout/Layout.astro';
 import Head from '../../components/astro/landing-pages/weather/Head.astro';
 import { WeatherApp } from '../../components/react/landing-pages/weather';
 
-const apiKey = import.meta.env.WEATHER_API_KEY;
+const weatherAPIKey = import.meta.env.WEATHER_API_KEY;
+const geoCodingAPIKey = import.meta.env.GEOCODING_API_KEY;
 ---
 
 <Layout>
   <Head slot="head" />
-  <WeatherApp apiKey={apiKey} client:load />
+  <WeatherApp weatherAPIKey={weatherAPIKey} geoCodingAPIKey={geoCodingAPIKey} client:load />
 </Layout>

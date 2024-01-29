@@ -3,6 +3,6 @@ import { weatherReducers } from './weather.reducer';
 
 export const weatherSlice = createSlice({
   name: 'weather',
-  initialState: { apiKey: '' },
+  initialState: { weatherAPIKey: '', geoCodingAPIKey: '', selectedCity: null },
   reducers: { ...weatherReducers },
 });

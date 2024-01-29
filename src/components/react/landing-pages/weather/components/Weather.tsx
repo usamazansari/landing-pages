@@ -1,4 +1,4 @@
-import { Anchor, Box, Breadcrumbs, Card, Flex, ScrollArea, Space, Text } from '@mantine/core';
+import { Anchor, Box, Breadcrumbs, Card, Flex, Space, Text } from '@mantine/core';
 import { useMemo } from 'react';
 import { SearchCity } from './internal';
 
@@ -11,7 +11,7 @@ export function Weather() {
   }, []);
 
   const breadCrumbItems = useMemo(() => {
-    return items.map(item => (
+    return items.map((item) => (
       <Anchor key={item.title.toLowerCase()} href={item.href} underline="never">
         <Flex align="center" gap="xs">
           {!item.icon ? null : (
@@ -26,23 +26,21 @@ export function Weather() {
   }, [items]);
 
   return (
-    <ScrollArea h="100%">
-      <Flex direction="column" gap="lg" className="container mx-auto my-lg" px="md">
-        <Box>
-          <Space />
-          <Flex align="center" justify="space-between">
-            <Breadcrumbs>{breadCrumbItems}</Breadcrumbs>
-          </Flex>
-        </Box>
-        <Box>
-          <Card className="h-32 grid place-content-center mt-4" withBorder>
-            <Text ta="center">Advertisement</Text>
-          </Card>
-        </Box>
-        <Box>
-          <SearchCity />
-        </Box>
-      </Flex>
-    </ScrollArea>
+    <Flex direction="column" gap="lg" className="container mx-auto my-lg" px="md">
+      <Box>
+        <Space />
+        <Flex align="center" justify="space-between">
+          <Breadcrumbs>{breadCrumbItems}</Breadcrumbs>
+        </Flex>
+      </Box>
+      <Box>
+        <Card className="h-32 grid place-content-center mt-4" withBorder>
+          <Text ta="center">Advertisement</Text>
+        </Card>
+      </Box>
+      <Box>
+        <SearchCity />
+      </Box>
+    </Flex>
   );
 }

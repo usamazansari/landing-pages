@@ -9,7 +9,6 @@ export function WeatherHeader() {
     <Box className="grid">
       <Flex gap="md" align="center" justify="space-between" py="lg" px="md" style={{ backgroundColor: 'var(--mantine-color-body)' }}>
         <Flex gap="md">
-          
           <Burger
             opened={opened}
             onClick={() => {
