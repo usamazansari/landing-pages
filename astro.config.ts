@@ -1,7 +1,7 @@
 import { defineConfig } from 'astro/config';
 import react from '@astrojs/react';
 import tailwind from '@astrojs/tailwind';
-import vercel from '@astrojs/vercel/serverless';
+import netlify from '@astrojs/netlify';
 import markdoc from '@astrojs/markdoc';
 
 import mdx from '@astrojs/mdx';
@@ -10,12 +10,5 @@ import mdx from '@astrojs/mdx';
 export default defineConfig({
   integrations: [react(), tailwind(), markdoc(), mdx()],
   output: 'server',
-  adapter: vercel({
-    speedInsights: {
-      enabled: true,
-    },
-    webAnalytics: {
-      enabled: true,
-    },
-  }),
+  adapter: netlify(),
 });

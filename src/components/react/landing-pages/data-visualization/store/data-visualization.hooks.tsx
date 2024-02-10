@@ -1,5 +1,5 @@
 import { useDispatch, type TypedUseSelectorHook, useSelector } from 'react-redux';
-import type { AppDispatch, RootState } from './weather.store';
+import type { AppDispatch, RootState } from './data-visualization.store';
 
 export const useAppDispatch = () => useDispatch<AppDispatch>();
 

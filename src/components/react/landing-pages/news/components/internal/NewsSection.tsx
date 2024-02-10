@@ -1,12 +1,12 @@
 import { Box, Divider, Text } from '@mantine/core';
 
-export function NewsSection({ name = '', children }: { name: string; children: React.ReactNode }) {
+export function NewsSection({ category = '', children }: { category: string; children: React.ReactNode }) {
   return (
     <Box className="grid gap-md">
       <Divider
         label={
-          <Text size="lg" fw="bold">
-            {!name.length ? 'LATEST NEWS' : name.toUpperCase()}
+          <Text component="a" href={`/news/${category}`} size="lg" fw="bold" c="blue">
+            {!category.length ? 'LATEST NEWS' : category.toUpperCase()}
           </Text>
         }
         labelPosition="left"

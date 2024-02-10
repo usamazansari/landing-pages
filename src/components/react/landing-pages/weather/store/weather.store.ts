@@ -1,20 +1,27 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
-import { weatherReducer } from './weather.slice';
+import { useDispatch, useSelector, type TypedUseSelectorHook } from 'react-redux';
 import { weatherApi } from './weather.api';
+import { weatherSlice } from './weather.slice';
+import type { City } from '../types';
 
 export interface IWeatherState {
-  apiKey: string;
+  weatherAPIKey: string;
+  geoCodingAPIKey: string;
+  selectedCity: City | null;
 }
 
-export const combinedReducers = combineReducers({
-  weather: weatherReducer,
+const combinedReducers = combineReducers({
+  weather: weatherSlice.reducer,
   [weatherApi.reducerPath]: weatherApi.reducer,
 });
 
 export const store = configureStore({
   reducer: combinedReducers,
-  middleware: getDefaultMiddleware => getDefaultMiddleware({}).concat(weatherApi.middleware),
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware({}).concat(weatherApi.middleware),
 });
 
-export type RootState = ReturnType<typeof combinedReducers>;
-export type AppDispatch = typeof store.dispatch;
+export const useAppDispatch = () => useDispatch<typeof store.dispatch>();
+export const useAppSelector: TypedUseSelectorHook<ReturnType<typeof combinedReducers>> = useSelector;
+
+export const { setWeatherAPIKey, setGeoCodingAPIKey, setSelectedCity } = weatherSlice.actions;
+export const { useSearchCityQuery, useLazySearchCityQuery, useGetCountriesListQuery, useLazyGetCountriesListQuery } = weatherApi;

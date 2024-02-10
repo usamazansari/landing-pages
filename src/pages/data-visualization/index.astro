@@ -1,0 +1,10 @@
+---
+import Layout from '../../Layout/Layout.astro';
+import Head from '../../components/astro/landing-pages/data-visualization/Head.astro';
+import { DataVisualizationApp } from '../../components/react/landing-pages/data-visualization';
+---
+
+<Layout>
+  <Head slot="head" />
+  <DataVisualizationApp client:load />
+</Layout>

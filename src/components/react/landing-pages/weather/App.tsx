@@ -6,12 +6,12 @@ import { Provider } from 'react-redux';
 import { WeatherPage } from './components';
 import { store } from './store';
 
-export function WeatherApp({ apiKey }: { apiKey: string }) {
+export function WeatherApp({ weatherAPIKey, geoCodingAPIKey }: { weatherAPIKey: string; geoCodingAPIKey: string }) {
   return (
     <Provider store={store}>
       <ErrorBoundary fallback={<ErrorBoundaryFallback />}>
         <MantineProvider theme={theme}>
-          <WeatherPage apiKey={apiKey} />
+          <WeatherPage weatherAPIKey={weatherAPIKey} geoCodingAPIKey={geoCodingAPIKey} />
         </MantineProvider>
       </ErrorBoundary>
     </Provider>
