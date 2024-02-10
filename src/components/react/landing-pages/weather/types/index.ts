@@ -1,2 +1,3 @@
+export * from './Country.types';
 export * from './Forecast.types';
-export * from './Location.types';
+export * from './City.types';

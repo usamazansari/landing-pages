@@ -1,37 +1,30 @@
 import { isFetchBaseQueryError, isSerializedError } from '@landing-pages/react/common/components';
-import { Box, Combobox, Flex, InputBase, Loader, Text, useCombobox } from '@mantine/core';
+import { ActionIcon, Box, Combobox, Flex, InputBase, Loader, Skeleton, Text, useCombobox } from '@mantine/core';
 import { useDebouncedState } from '@mantine/hooks';
 import type { SerializedError } from '@reduxjs/toolkit';
 import type { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { useCallback, useEffect, useState } from 'react';
-import { setSelectedCity, useLazySearchCityQuery, useAppDispatch, useAppSelector } from '../../store';
-import type { Location } from '../../types';
+import { setSelectedCity, useAppDispatch, useAppSelector, useLazyGetCountriesListQuery, useLazySearchCityQuery } from '../../store';
+import type { City, Country, Forecast } from '../../types';
 
 export function SearchCity() {
   const dispatch = useAppDispatch();
   const apiKey = useAppSelector((state) => state.weather.geoCodingAPIKey);
 
-  const [searchCity, { data, isLoading, isSuccess, isError, error }] = useLazySearchCityQuery({});
+  const [searchCity, { data: cityData, isLoading: isCityLoading, isSuccess: isCitySuccess, isError: isCityError, error: cityError }] = useLazySearchCityQuery(
+    {},
+  );
+  const [
+    getCountriesList,
+    { data: countriesListData, isLoading: isCountriesListLoading, isSuccess: isCountriesListSuccess, isError: isCountriesListError, error: countriesListError },
+  ] = useLazyGetCountriesListQuery({});
   const [searchString, setSearchString] = useState('');
   const [debouncedSearchString, setDebouncedSearchString] = useDebouncedState('', 250);
-  const [searchResults, setSearchResults] = useState<Location[]>([]);
+  const [searchResults, setSearchResults] = useState<{ city: City; country?: Country; forecast?: Forecast }[]>([]);
 
   const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption(),
   });
-
-  const options = searchResults.map((item) => (
-    <Combobox.Option value={item.name as string} key={`${item.latitude}_${item.longitude}`}>
-      <Box className="grid gap-xs">
-        <Text ta="left" size="sm">
-          {item.name}
-        </Text>
-        <Text ta="left" c="dimmed" size="xs">
-          {item.country}
-        </Text>
-      </Box>
-    </Combobox.Option>
-  ));
 
   const printError = useCallback(
     (error: FetchBaseQueryError | SerializedError | undefined) =>
@@ -48,7 +41,13 @@ export function SearchCity() {
       if (debouncedSearchString.length >= 3) {
         try {
           const cities = await searchCity({ apiKey, city: debouncedSearchString }).unwrap();
-          setSearchResults(cities ?? []);
+          const countries = await getCountriesList({ countryCodeListStringified: cities.map((city) => city.country).join(',') }).unwrap();
+          setSearchResults(
+            cities.map((city) => ({
+              city,
+              country: countries.find((country) => country.cca2 === city.country || country.cca3 === city.country),
+            })),
+          );
         } catch (e) {
           console.log(e);
           setSearchResults([]);
@@ -56,22 +55,54 @@ export function SearchCity() {
       }
     };
     fetchData();
-  }, [apiKey, searchCity, debouncedSearchString]);
+  }, [apiKey, searchCity, debouncedSearchString, getCountriesList]);
+
+  const options = searchResults.map(({ city, country }) => (
+    <Combobox.Option value={city.name as string} key={`${city.latitude}_${city.longitude}`}>
+      <Box className="grid grid-rows-2 grid-cols-2 items-center">
+        <Text ta="left" size="sm" className="[grid-row:1/2] [grid-column:1/2]">
+          {city.name}
+        </Text>
+        {isCountriesListLoading ? (
+          <Text ta="left" size="sm" className="[grid-row:2/3] [grid-column:1/2]">
+            <Skeleton height={16} radius="xs" />
+          </Text>
+        ) : isCountriesListError ? (
+          <Text ta="left" c="red" size="sm" className="[grid-row:2/3] [grid-column:1/2]">
+            {printError(countriesListError)}
+          </Text>
+        ) : isCountriesListSuccess ? (
+          !countriesListData?.length ? null : (
+            <Flex align="center" gap="xs">
+              <Text ta="left" c="dimmed" size="xs" className="[grid-row:2/3] [grid-column:1/2]">
+                {country?.name.common}
+              </Text>
+            </Flex>
+          )
+        ) : null}
+        <Box className="[grid-row:1/3] [grid-column:2/3] justify-self-end">
+          <Text c="yellow" className="leading-[normal] grid place-content-center">
+            <span className="material-symbols-outlined">clear_day</span>
+          </Text>
+        </Box>
+      </Box>
+    </Combobox.Option>
+  ));
 
   return (
     <Combobox
       store={combobox}
       withinPortal={false}
       onOptionSubmit={(value) => {
-        const selectedCity = searchResults.find((item) => item.name.toLowerCase() === value.toLowerCase());
-        dispatch(setSelectedCity(selectedCity ?? null));
+        const selectedCity = searchResults.find((item) => item.city.name.toLowerCase() === value.toLowerCase())?.city ?? null;
+        dispatch(setSelectedCity(selectedCity));
         combobox.closeDropdown();
       }}>
       <Combobox.DropdownTarget>
         <InputBase
           placeholder="Enter at least three characters to search"
           value={searchString}
-          rightSection={isLoading ? <Loader size={18} /> : <Combobox.Chevron />}
+          rightSection={isCityLoading ? <Loader size={18} /> : <Combobox.Chevron />}
           onClick={() => {
             combobox.openDropdown();
           }}
@@ -83,7 +114,7 @@ export function SearchCity() {
 
       <Combobox.Dropdown>
         <Combobox.Options>
-          {isLoading ? (
+          {isCityLoading ? (
             <Combobox.Options>
               <Combobox.Empty>
                 <Flex align="center" justify="center" gap="xs">
@@ -92,16 +123,16 @@ export function SearchCity() {
                 </Flex>
               </Combobox.Empty>
             </Combobox.Options>
-          ) : isError ? (
+          ) : isCityError ? (
             <Combobox.Options>
               <Combobox.Empty>
                 <Text c="red" ta="left" size="sm">
-                  {printError(error)}
+                  {printError(cityError)}
                 </Text>
               </Combobox.Empty>
             </Combobox.Options>
-          ) : isSuccess ? (
-            !data?.length ? (
+          ) : isCitySuccess ? (
+            !cityData?.length ? (
               <Combobox.Options>
                 <Combobox.Empty>
                   <Text ta="left" size="sm">
@@ -116,7 +147,7 @@ export function SearchCity() {
             <Combobox.Options>
               <Combobox.Empty>
                 <Text ta="left" size="sm">
-                  Search for a city name to show the results.
+                  Enter 3 or more characters to search.
                 </Text>
               </Combobox.Empty>
             </Combobox.Options>

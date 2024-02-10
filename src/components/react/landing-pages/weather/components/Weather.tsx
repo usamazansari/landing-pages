@@ -38,7 +38,7 @@ export function Weather() {
           <Text ta="center">Advertisement</Text>
         </Card>
       </Box>
-      <Box>
+      <Box className="grid grid-cols-4 gap-md">
         <SearchCity />
       </Box>
     </Flex>
